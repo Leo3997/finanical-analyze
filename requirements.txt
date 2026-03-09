@@ -1,0 +1,9 @@
+akshare
+requests
+openai
+python-dotenv
+chinese-calendar
+pandas
+beautifulsoup4
+html5lib
+lxml

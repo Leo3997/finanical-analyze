@@ -1,0 +1,11 @@
+.env
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+app.log
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.bak
