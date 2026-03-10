@@ -30,8 +30,6 @@ def main():
         return
 
     fetcher = DataFetcher()
-    analyzer = AIAnalyzer()
-    notifier = DingTalkNotifier()
     
     state_file = "workflow_state.json"
 
@@ -96,6 +94,9 @@ def main():
             state = json.load(f)
 
         logger.info("开始执行 AI 分析与推送阶段...")
+        analyzer = AIAnalyzer()
+        notifier = DingTalkNotifier()
+        
         report = analyzer.generate_report(state["quotes_data"], state["news_str"])
         
         title = f"【期货智研-情绪增强版】({state['date_str']})"
