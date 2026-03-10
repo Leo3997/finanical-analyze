@@ -109,13 +109,19 @@ def main():
         
         title = f"【期货智研-情绪增强版】({state['date_str']})"
         chart_url = state["chart_info"].get("chart_url")
-        
-        image_markdown = ""
-        if chart_url:
-            image_markdown = f"![趋势图]({chart_url})\n\n"
             
-        full_text = f"## {title}\n\n{image_markdown}{report}"
+        full_text = f"## {title}\n\n{report}"
         notifier.send_markdown(title, full_text)
+        
+        # 单独发送趋势图 link 消息（钉钉 markdown 不支持外链图片）
+        if chart_url:
+            notifier.send_link(
+                title=f"📈 趋势图 ({state['date_str']})",
+                text="点击查看今日期货趋势图",
+                message_url=chart_url,
+                pic_url=chart_url
+            )
+        
         logger.info("推送任务执行成功。")
 
 if __name__ == "__main__":

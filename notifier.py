@@ -44,6 +44,37 @@ class DingTalkNotifier:
             logger.error(f"钉钉推送请求异常: {e}")
             return False
 
+    def send_link(self, title, text, message_url, pic_url=""):
+        """发送 Link 类型消息（带图片预览）"""
+        if not self.webhook_url:
+            logger.error("未配置 DINGTALK_WEBHOOK，无法发送推送。")
+            return False
+
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "msgtype": "link",
+            "link": {
+                "title": title,
+                "text": text,
+                "messageUrl": message_url,
+                "picUrl": pic_url
+            }
+        }
+
+        try:
+            logger.info(f"正在推送 Link 消息到钉钉: {title}")
+            response = requests.post(self.webhook_url, headers=headers, data=json.dumps(data))
+            result = response.json()
+            if result.get("errcode") == 0:
+                logger.info("钉钉 Link 消息推送成功")
+                return True
+            else:
+                logger.error(f"钉钉 Link 推送失败: {result.get('errmsg')}")
+                return False
+        except Exception as e:
+            logger.error(f"钉钉 Link 推送请求异常: {e}")
+            return False
+
 if __name__ == "__main__":
     # 测试推送
     notifier = DingTalkNotifier()
