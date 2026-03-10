@@ -73,8 +73,9 @@ def main():
         # 优先级：GitHub Actions 环境 > BASE_URL
         github_repo = os.getenv("GITHUB_REPOSITORY")
         if github_repo:
-            # https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}
-            chart_info["chart_url"] = f"https://raw.githubusercontent.com/{github_repo}/main/static/charts/{img_name}"
+            # 使用 jsDelivr CDN（国内可用，raw.githubusercontent.com 在国内被墙）
+            # 格式: https://cdn.jsdelivr.net/gh/{owner}/{repo}@{branch}/{path}
+            chart_info["chart_url"] = f"https://cdn.jsdelivr.net/gh/{github_repo}@main/static/charts/{img_name}"
         else:
             base_url = os.getenv("BASE_URL", "").rstrip("/")
             if base_url:
