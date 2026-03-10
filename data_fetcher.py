@@ -98,8 +98,8 @@ class DataFetcher:
             matplotlib.use('Agg')  # 设置为无界面后端
             import matplotlib.pyplot as plt
             
-            # 设置中文字体 (Ubuntu 环境通常需要安装，或者尝试使用内置的类黑体)
-            matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans', 'SimHei', 'Arial Unicode MS']
+            # 设置中文字体优先级: Ubuntu(WenQuanYi) > Windows(SimHei) > macOS(Arial Unicode)
+            matplotlib.rcParams['font.sans-serif'] = ['WenQuanYi Zen Hei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans']
             matplotlib.rcParams['axes.unicode_minus'] = False
             
             df = self.get_futures_history(name, days=10)
