@@ -6,6 +6,9 @@ on:
     - cron: '0 8 * * *'
   workflow_dispatch: # 支持手动触发
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,9 +27,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run analysis and push
+    - name: 1. Generate charts
+      env:
+        TARGET_SYMBOLS: ${{ secrets.TARGET_SYMBOLS }}
+      run: python main.py --step prepare
+
+    - name: 2. Commit and push charts
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add static/charts/*.png
+        git commit -m "Auto-generate futures trend charts [skip ci]" || echo "No changes to commit"
+        git push
+
+    - name: 3. AI analysis and push to DingTalk
       env:
         DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
-        TARGET_SYMBOLS: ${{ secrets.TARGET_SYMBOLS }}
-      run: python main.py
+      run: python main.py --step notify

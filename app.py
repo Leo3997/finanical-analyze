@@ -2,7 +2,7 @@ import os
 import logging
 from datetime import datetime
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_apscheduler import APScheduler
 import chinese_calendar
 
@@ -88,6 +88,10 @@ def run_now():
 @app.route('/health')
 def health():
     return jsonify({"status": "OK", "time": datetime.now().isoformat()})
+
+@app.route('/static/charts/<path:filename>')
+def serve_charts(filename):
+    return send_from_directory('static/charts', filename)
 
 if __name__ == "__main__":
     # 添加定时计划：周一至周五 16:00

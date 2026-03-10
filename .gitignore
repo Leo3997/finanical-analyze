@@ -9,3 +9,5 @@ app.log
 .vscode/
 *.swp
 *.bak
+workflow_state.json
+static/

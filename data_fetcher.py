@@ -13,12 +13,15 @@ class DataFetcher:
     """数据采集类，负责从新浪 API 获取期货行情和从 AkShare 获取新闻"""
     
     def __init__(self):
-        # 品种名称与新浪代码缩写映射 (主力合约通常以 0 结尾，如 M0, RM0)
+        # 品种名称与新浪代码缩写映射 (主力合约通常以 0 结尾)
         self.symbol_map = {
             "豆粕": "M0", "菜粕": "RM0", "玉米": "C0", 
             "生猪": "LH0", "白糖": "SR0", "棉花": "CF0", 
             "甲醇": "MA0", "尿素": "UR0", "PTA": "TA0", 
-            "纯碱": "SA0", "PVC": "V0"
+            "纯碱": "SA0", "PVC": "V0",
+            "淀粉": "CS0", "大豆": "A0", "豆油": "Y0",
+            "乙醇": "EB0", # 乙二醇/苯乙烯等相关，若指燃料乙醇目前国内交易极少
+            "生物柴": "P0" # 生物柴油目前常用棕榈油作为参考或产业链替代
         }
 
     def get_futures_quotes(self, target_names):
@@ -69,6 +72,60 @@ class DataFetcher:
             return df.head(10)
         except Exception as e:
             logger.error(f"获取新闻失败: {e}")
+            return None
+
+    def get_futures_history(self, name, days=5):
+        """获取品种历史日线数据"""
+        try:
+            # 转换名称为新浪代码 (例如: 豆粕 -> M0)
+            symbol = self.symbol_map.get(name)
+            if not symbol: return None
+            
+            logger.info(f"正在获取 {name}({symbol}) 的历史数据...")
+            # 这里的 symbol 已经是 M0, RM0 这种格式，akshare 接口通常需要 nf_M0 或直接 M0
+            df = ak.futures_zh_daily_sina(symbol=symbol)
+            if df is not None:
+                return df.tail(days)
+            return None
+        except Exception as e:
+            logger.error(f"获取 {name} 历史数据失败: {e}")
+            return None
+
+    def generate_trend_chart(self, name, output_path="trend.png"):
+        """生成品种的 5 日价格趋势图"""
+        try:
+            import matplotlib.pyplot as plt
+            import matplotlib
+            # 设置中文字体 (Windows 环境通用的黑体)
+            matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+            matplotlib.rcParams['axes.unicode_minus'] = False
+            
+            df = self.get_futures_history(name, days=10)
+            if df is None or df.empty:
+                logger.warning(f"无法生成 {name} 的趋势图：无数据")
+                return None
+            
+            plt.figure(figsize=(10, 5))
+            plt.plot(df['date'], df['close'], marker='o', linestyle='-', color='#1f77b4', linewidth=2, markersize=6)
+            
+            # 标注涨跌幅
+            last_price = df['close'].iloc[-1]
+            first_price = df['close'].iloc[0]
+            total_change = (last_price - first_price) / first_price * 100
+            
+            plt.title(f"{name} 期货主力合约 10 日价格趋势 (涨跌幅: {total_change:.2f}%)", fontsize=14, pad=15)
+            plt.xlabel("日期", fontsize=12)
+            plt.ylabel("收盘价", fontsize=12)
+            plt.grid(True, linestyle='--', alpha=0.7)
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            
+            plt.savefig(output_path, dpi=100)
+            plt.close()
+            logger.info(f"{name} 趋势图已保存至: {output_path}")
+            return output_path
+        except Exception as e:
+            logger.error(f"生成 {name} 趋势图失败: {e}")
             return None
 
 if __name__ == "__main__":
