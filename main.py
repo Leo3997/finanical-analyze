@@ -61,17 +61,24 @@ def main():
             img_path = os.path.join("static/charts", img_name)
             if fetcher.generate_trend_chart(main_symbol, output_path=img_path):
                 chart_info["img_name"] = img_name
+                logger.info(f"图表已成功生成: {img_path}")
+            else:
+                logger.error(f"图表生成失败: {main_symbol}")
+
+        # 调试：打印 charts 目录内容
+        if os.path.exists("static/charts"):
+            logger.info(f"目录 static/charts 内容: {os.listdir('static/charts')}")
                 
-                # 构造 URL
-                # 优先级：GitHub Actions 环境 > BASE_URL
-                github_repo = os.getenv("GITHUB_REPOSITORY")
-                if github_repo:
-                    # https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}
-                    chart_info["chart_url"] = f"https://raw.githubusercontent.com/{github_repo}/main/static/charts/{img_name}"
-                else:
-                    base_url = os.getenv("BASE_URL", "").rstrip("/")
-                    if base_url:
-                        chart_info["chart_url"] = f"{base_url}/static/charts/{img_name}"
+        # 构造 URL
+        # 优先级：GitHub Actions 环境 > BASE_URL
+        github_repo = os.getenv("GITHUB_REPOSITORY")
+        if github_repo:
+            # https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}
+            chart_info["chart_url"] = f"https://raw.githubusercontent.com/{github_repo}/main/static/charts/{img_name}"
+        else:
+            base_url = os.getenv("BASE_URL", "").rstrip("/")
+            if base_url:
+                chart_info["chart_url"] = f"{base_url}/static/charts/{img_name}"
 
         # 保存状态供下一阶段使用
         state = {

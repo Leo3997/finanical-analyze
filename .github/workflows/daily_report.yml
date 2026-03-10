@@ -36,9 +36,9 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add static/charts/*.png
+        git add static/charts/
         git commit -m "Auto-generate futures trend charts [skip ci]" || echo "No changes to commit"
-        git push
+        git push || echo "Push failed, continuing..."
 
     - name: 3. AI analysis and push to DingTalk
       env:

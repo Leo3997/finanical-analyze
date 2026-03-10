@@ -94,16 +94,23 @@ class DataFetcher:
     def generate_trend_chart(self, name, output_path="trend.png"):
         """生成品种的 5 日价格趋势图"""
         try:
-            import matplotlib.pyplot as plt
             import matplotlib
-            # 设置中文字体 (Windows 环境通用的黑体)
-            matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+            matplotlib.use('Agg')  # 设置为无界面后端
+            import matplotlib.pyplot as plt
+            
+            # 设置中文字体 (Ubuntu 环境通常需要安装，或者尝试使用内置的类黑体)
+            matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans', 'SimHei', 'Arial Unicode MS']
             matplotlib.rcParams['axes.unicode_minus'] = False
             
             df = self.get_futures_history(name, days=10)
             if df is None or df.empty:
                 logger.warning(f"无法生成 {name} 的趋势图：无数据")
                 return None
+            
+            # 确保价格数据为数值型
+            df['close'] = pd.to_numeric(df['close'], errors='coerce')
+            df['date'] = pd.to_datetime(df['date'])
+            df = df.dropna(subset=['close'])
             
             plt.figure(figsize=(10, 5))
             plt.plot(df['date'], df['close'], marker='o', linestyle='-', color='#1f77b4', linewidth=2, markersize=6)
@@ -113,9 +120,9 @@ class DataFetcher:
             first_price = df['close'].iloc[0]
             total_change = (last_price - first_price) / first_price * 100
             
-            plt.title(f"{name} 期货主力合约 10 日价格趋势 (涨跌幅: {total_change:.2f}%)", fontsize=14, pad=15)
-            plt.xlabel("日期", fontsize=12)
-            plt.ylabel("收盘价", fontsize=12)
+            plt.title(f"{name} {total_change:.2f}% (10 Days Trend)", fontsize=14, pad=15)
+            plt.xlabel("Date", fontsize=12)
+            plt.ylabel("Price", fontsize=12)
             plt.grid(True, linestyle='--', alpha=0.7)
             plt.xticks(rotation=45)
             plt.tight_layout()
