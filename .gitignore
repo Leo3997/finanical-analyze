@@ -10,4 +10,3 @@ app.log
 *.swp
 *.bak
 workflow_state.json
-static/
