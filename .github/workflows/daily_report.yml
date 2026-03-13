@@ -15,10 +15,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
@@ -41,17 +41,6 @@ jobs:
         git diff --cached --quiet || git commit -m "Auto-generate futures trend charts [skip ci]"
         git pull --rebase origin main
         git push || echo "Push failed, continuing..."
-
-    - name: 2.5 Purge jsDelivr cache
-      run: |
-        # 找到刚生成的图表文件并刷新 CDN 缓存
-        for f in static/charts/*.png; do
-          filename=$(basename "$f")
-          echo "Purging CDN cache for $filename ..."
-          curl -s "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/static/charts/$filename" || true
-        done
-        # 等待 CDN 生效
-        sleep 10
 
     - name: 3. AI analysis and push to DingTalk
       env:
