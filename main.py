@@ -85,10 +85,10 @@ def main():
         analyzer = AIAnalyzer()
         notifier = DingTalkNotifier()
         
-        # 1. 每日智研推送
-        report = analyzer.generate_report(state["quotes_data"], state["news_str"])
-        title = f"【期货智研-情绪增强版】({state['date_str']})"
-        notifier.send_markdown(title, f"## {title}\n\n{report}")
+        # 1. 每日智研推送 (已取消)
+        # report = analyzer.generate_report(state["quotes_data"], state["news_str"])
+        # title = f"【期货智研-情绪增强版】({state['date_str']})"
+        # notifier.send_markdown(title, f"## {title}\n\n{report}")
         
         # 2. 大宗商品市场日报推送
         commodity_report = analyzer.generate_commodity_report(
