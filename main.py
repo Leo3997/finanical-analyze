@@ -57,30 +57,7 @@ def main():
         commodity_news_list = fetcher.get_commodity_news(commodity_keywords)
         commodity_news_str = "\n".join([f"({item.get('pub_date','')}) {'[国际]' if item.get('is_intl') else ''} {item.get('content','')}" for item in commodity_news_list])
 
-        # 生成趋势图 (全品种)
-        charts_list = []
-        if target_symbols:
-            os.makedirs("static/charts", exist_ok=True)
-            for symbol in target_symbols:
-                img_name = f"trend_{symbol}_{now.strftime('%Y%m%d')}.png"
-                img_path = os.path.join("static/charts", img_name)
-                if fetcher.generate_trend_chart(symbol, output_path=img_path):
-                    chart_item = {"symbol": symbol, "img_name": img_name}
-                    
-                    # 构造 URL
-                    github_repo = os.getenv("GITHUB_REPOSITORY")
-                    if github_repo:
-                        chart_item["chart_url"] = f"https://raw.githubusercontent.com/{github_repo}/main/static/charts/{img_name}"
-                        chart_item["page_url"] = f"https://github.com/{github_repo}/blob/main/static/charts/{img_name}"
-                    
-                    charts_list.append(chart_item)
-                    logger.info(f"图表已成功生成: {img_path}")
-                else:
-                    logger.error(f"图表生成失败: {symbol}")
-
-        # 调试：打印 charts 目录内容
-        if os.path.exists("static/charts"):
-            logger.info(f"目录 static/charts 内容: {os.listdir('static/charts')}")
+        # 调试：打印 charts 目录内容 (已禁用生成)
                 
 
         # 保存状态供下一阶段使用
@@ -89,7 +66,6 @@ def main():
             "news_str": news_str,
             "commodity_news_str": commodity_news_str,
             "commodity_keywords": commodity_keywords,
-            "charts_list": charts_list,
             "date_str": now.strftime('%m-%d')
         }
         with open(state_file, "w", encoding="utf-8") as f:
@@ -123,18 +99,7 @@ def main():
         comm_title = f"【大宗商品市场日报】({state['date_str']})"
         notifier.send_markdown(comm_title, f"## {comm_title}\n\n{commodity_report}")
 
-        # 3. 单独发送各品种趋势图 link 消息
-        for chart_info in state.get("charts_list", []):
-            chart_url = chart_info.get("chart_url")
-            symbol = chart_info.get("symbol")
-            if chart_url:
-                page_url = chart_info.get("page_url", chart_url)
-                notifier.send_link(
-                    title=f"📈 {symbol} 趋势图 ({state['date_str']})",
-                    text=f"点击查看今日 {symbol} 期货趋势分析图",
-                    message_url=page_url,
-                    pic_url=chart_url
-                )
+        # 3. 趋势图推送已取消
         
         logger.info("推送任务执行成功。")
 
