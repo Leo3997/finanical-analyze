@@ -82,12 +82,6 @@ def main():
         if os.path.exists("static/charts"):
             logger.info(f"目录 static/charts 内容: {os.listdir('static/charts')}")
                 
-        # 构造 URL
-        # GitHub Actions 环境：使用 raw.githubusercontent.com（钉钉服务端拉取，不受个人网络限制）
-        github_repo = os.getenv("GITHUB_REPOSITORY")
-        if github_repo:
-            chart_info["chart_url"] = f"https://raw.githubusercontent.com/{github_repo}/main/static/charts/{img_name}"
-            chart_info["page_url"] = f"https://github.com/{github_repo}/blob/main/static/charts/{img_name}"
 
         # 保存状态供下一阶段使用
         state = {
