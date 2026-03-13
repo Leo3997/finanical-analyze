@@ -59,6 +59,46 @@ class AIAnalyzer:
             logger.error(f"调用 DeepSeek API 失败: {e}")
             return f"AI 分析失败: {e}"
 
+    def generate_commodity_report(self, quotes_data, news_data, keywords):
+        """生成大宗商品专项研报"""
+        if not news_data:
+            return "暂无相关大宗商品新闻数据。"
+
+        prompt = f"""你是一个资深大宗商品分析师。请针对以下【{', '.join(keywords)}】等品种，撰写一份详细的每日市场动态报告。
+重点关注：最新国内外消息、供需变动、国际市场（如CBOT、USDA报告）的影响。
+
+### 市场参考行情：
+{quotes_data}
+
+### 搜集到的最新国内外消息：
+{news_data}
+
+### 输出要求：
+1. **使用 Markdown 格式**。
+2. **报告结构**：
+    - **【今日头条/核心动向】**：提取最具影响力的1-2条国内外消息。
+    - **【国内市场分析】**：针对玉米、淀粉、大豆、豆粕等品种的国内现货及期货特征。
+    - **【国际市场联动】**：重点分析美盘（CBOT）、南美产区天气或出口政策对国内的传导。
+    - **【产业链深度：乙醇与生物柴油】**：结合能源和油脂板块，分析其替代效应或成本端变动。
+    - **【风险提示】**：列出短期内可能导致价格剧烈波动的因素。
+3. **风格**：深度、专业、客观，对“国际消息”需进行重点标注和解读。
+"""
+
+        try:
+            logger.info("正在调用 DeepSeek API 生成大宗商品日报...")
+            response = self.client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[
+                    {"role": "system", "content": "你是一个沉稳且专业的国际大宗商品研究员。"},
+                    {"role": "user", "content": prompt},
+                ],
+                stream=False
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            logger.error(f"生成大宗商品日报失败: {e}")
+            return f"日报生成失败: {e}"
+
 if __name__ == "__main__":
     # 模拟测试数据
     test_quotes = [

@@ -38,11 +38,11 @@ def main():
         logger.info("开始执行数据准备阶段...")
         target_symbols = [s.strip() for s in os.getenv("TARGET_SYMBOLS", "").split(",") if s.strip()]
         if not target_symbols:
-            target_symbols = ["豆粕"]
+            target_symbols = ["豆粕", "玉米", "大豆", "乙醇", "生物柴"]
             
         quotes_data = fetcher.get_futures_quotes(target_symbols)
         
-        # 获取新闻
+        # 获取通用期货新闻
         news_df = fetcher.get_futures_news()
         news_list = []
         if news_df is not None:
@@ -51,6 +51,11 @@ def main():
                 time_str = row.get('pubDate', row.get('发布时间', '无时间'))
                 news_list.append(f"{time_str}：{content}")
         news_str = "\n".join(news_list)
+
+        # 获取大宗商品专项新闻
+        commodity_keywords = ["玉米", "淀粉", "乙醇", "大豆", "豆粕", "豆油", "生物柴", "CBOT", "USDA"]
+        commodity_news_list = fetcher.get_commodity_news(commodity_keywords)
+        commodity_news_str = "\n".join([f"({item.get('pub_date','')}) {'[国际]' if item.get('is_intl') else ''} {item.get('content','')}" for item in commodity_news_list])
 
         # 生成趋势图
         chart_info = {"img_name": "", "chart_url": ""}
@@ -70,21 +75,18 @@ def main():
             logger.info(f"目录 static/charts 内容: {os.listdir('static/charts')}")
                 
         # 构造 URL
-        # 优先级：GitHub Actions 环境 > BASE_URL
+        # GitHub Actions 环境：使用 raw.githubusercontent.com（钉钉服务端拉取，不受个人网络限制）
         github_repo = os.getenv("GITHUB_REPOSITORY")
         if github_repo:
-            # 使用 jsDelivr CDN（国内可用，raw.githubusercontent.com 在国内被墙）
-            # 格式: https://cdn.jsdelivr.net/gh/{owner}/{repo}@{branch}/{path}
-            chart_info["chart_url"] = f"https://cdn.jsdelivr.net/gh/{github_repo}@main/static/charts/{img_name}"
-        else:
-            base_url = os.getenv("BASE_URL", "").rstrip("/")
-            if base_url:
-                chart_info["chart_url"] = f"{base_url}/static/charts/{img_name}"
+            chart_info["chart_url"] = f"https://raw.githubusercontent.com/{github_repo}/main/static/charts/{img_name}"
+            chart_info["page_url"] = f"https://github.com/{github_repo}/blob/main/static/charts/{img_name}"
 
         # 保存状态供下一阶段使用
         state = {
             "quotes_data": quotes_data,
             "news_str": news_str,
+            "commodity_news_str": commodity_news_str,
+            "commodity_keywords": commodity_keywords,
             "chart_info": chart_info,
             "date_str": now.strftime('%m-%d')
         }
@@ -105,20 +107,28 @@ def main():
         analyzer = AIAnalyzer()
         notifier = DingTalkNotifier()
         
+        # 1. 每日智研推送
         report = analyzer.generate_report(state["quotes_data"], state["news_str"])
-        
         title = f"【期货智研-情绪增强版】({state['date_str']})"
-        chart_url = state["chart_info"].get("chart_url")
-            
-        full_text = f"## {title}\n\n{report}"
-        notifier.send_markdown(title, full_text)
+        notifier.send_markdown(title, f"## {title}\n\n{report}")
         
-        # 单独发送趋势图 link 消息（钉钉 markdown 不支持外链图片）
+        # 2. 大宗商品市场日报推送
+        commodity_report = analyzer.generate_commodity_report(
+            state["quotes_data"], 
+            state["commodity_news_str"],
+            state["commodity_keywords"]
+        )
+        comm_title = f"【大宗商品市场日报】({state['date_str']})"
+        notifier.send_markdown(comm_title, f"## {comm_title}\n\n{commodity_report}")
+
+        # 3. 单独发送趋势图 link 消息
+        chart_url = state["chart_info"].get("chart_url")
         if chart_url:
+            page_url = state["chart_info"].get("page_url", chart_url)
             notifier.send_link(
                 title=f"📈 趋势图 ({state['date_str']})",
                 text="点击查看今日期货趋势图",
-                message_url=chart_url,
+                message_url=page_url,
                 pic_url=chart_url
             )
         

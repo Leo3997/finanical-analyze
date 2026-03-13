@@ -20,8 +20,8 @@ class DataFetcher:
             "甲醇": "MA0", "尿素": "UR0", "PTA": "TA0", 
             "纯碱": "SA0", "PVC": "V0",
             "淀粉": "CS0", "大豆": "A0", "豆油": "Y0",
-            "乙醇": "EB0", # 乙二醇/苯乙烯等相关，若指燃料乙醇目前国内交易极少
-            "生物柴": "P0" # 生物柴油目前常用棕榈油作为参考或产业链替代
+            "乙醇": "EB0", # 苯乙烯 EB 常作为乙醇产业链参考
+            "生物柴": "P0"  # 棕榈油 P 是生物柴油的核心原料
         }
 
     def get_futures_quotes(self, target_names):
@@ -65,14 +65,68 @@ class DataFetcher:
         return quotes
 
     def get_futures_news(self):
-        """获取期货新闻 (上海金属网)"""
+        """获取通用期货新闻 (上海金属网)"""
         try:
             logger.info("正在获取期货新闻...")
             df = ak.futures_news_shmet()
-            return df.head(10)
+            if df is not None and not df.empty:
+                return df.head(10)
+            return None
         except Exception as e:
             logger.error(f"获取新闻失败: {e}")
             return None
+
+    def get_commodity_news(self, keywords=None):
+        """获取大宗商品新闻并根据关键词过滤"""
+        try:
+            logger.info(f"正在获取大宗商品新闻，过滤关键词: {keywords}")
+            all_news = []
+
+            # 数据源 1: 上海金属网
+            try:
+                df_shmet = ak.futures_news_shmet()
+                if df_shmet is not None and not df_shmet.empty:
+                    title_col = 'title' if 'title' in df_shmet.columns else df_shmet.columns[0]
+                    date_col = '发布时间' if '发布时间' in df_shmet.columns else 'pubDate'
+                    for _, row in df_shmet.iterrows():
+                        all_news.append({"content": str(row.get(title_col, '')), "pub_date": str(row.get(date_col, ''))})
+            except Exception as e:
+                logger.warning(f"SHMET 新闻获取失败: {e}")
+
+            # 数据源 2: 百度财经新闻 (补充)
+            try:
+                df_news_baidu = ak.news_economic_baidu()
+                if df_news_baidu is not None and not df_news_baidu.empty:
+                    for _, row in df_news_baidu.iterrows():
+                        all_news.append({"content": str(row.get('内容', row.get('title', ''))), "pub_date": str(row.get('发布时间', ''))})
+            except Exception as e:
+                logger.warning(f"百度新闻获取失败: {e}")
+            
+            # 如果没有关键词，返回前15条
+            if not keywords:
+                return all_news[:15]
+            
+            # 根据关键词过滤 (不区分大小写)
+            filtered_news = []
+            keywords_lower = [k.lower() for k in keywords]
+            for item in all_news:
+                content = item['content'].lower()
+                if any(kw in content for kw in keywords_lower):
+                    # 识别是否包含国际市场关键词
+                    intl_keywords = ["cbot", "usda", "巴西", "阿根廷", "马来西亚", "美盘", "出口", "国际", "海外", "欧美", "全球"]
+                    is_intl = any(ik in content for ik in intl_keywords)
+                    item['is_intl'] = is_intl
+                    filtered_news.append(item)
+            
+            # 如果过滤后为空，尝试更宽泛的匹配或返回兜底
+            if not filtered_news and all_news:
+                logger.info("关键词过滤结果为空，使用前10条通用新闻作为兜底。")
+                return all_news[:10]
+            
+            return filtered_news[:20]
+        except Exception as e:
+            logger.error(f"获取大宗商品新闻失败: {e}")
+            return []
 
     def get_futures_history(self, name, days=5):
         """获取品种历史日线数据"""
