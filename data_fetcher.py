@@ -101,6 +101,14 @@ class DataFetcher:
                         all_news.append({"content": str(row.get('内容', row.get('title', ''))), "pub_date": str(row.get('发布时间', ''))})
             except Exception as e:
                 logger.warning(f"百度新闻获取失败: {e}")
+            # 数据源 3: 财联社 全球7x24小时电报 (宏观局势/地缘/气候)
+            try:
+                df_news_cls = ak.stock_info_global_cls()
+                if df_news_cls is not None and not df_news_cls.empty:
+                    for _, row in df_news_cls.iterrows():
+                        all_news.append({"content": str(row.get('内容', '')), "pub_date": str(row.get('发布时间', ''))})
+            except Exception as e:
+                logger.warning(f"财联社全球电报获取失败: {e}")
             
             # 如果没有关键词，返回前15条
             if not keywords:
@@ -109,15 +117,32 @@ class DataFetcher:
             # 根据关键词过滤 (不区分大小写)
             filtered_news = []
             keywords_lower = [k.lower() for k in keywords]
+            
+            # 全球宏观局势追踪池
+            macro_keywords = [
+                "伊朗", "战争", "地缘", "原油", "油价", "制裁", "中东", "冲突", "武装", # 地缘与能源
+                "干旱", "洪涝", "天气", "气候", "厄尔尼诺", "拉尼娜", "减产", "农作物", "usda", # 气候与农业
+                "美联储", "降息", "加息", "通胀", "cpi", "非农", "央行", "宏观" # 宏观金融
+            ]
+            
             for item in all_news:
                 content = item['content'].lower()
-                if any(kw in content for kw in keywords_lower):
+                
+                # 判断是否命中品种专属关键词
+                hit_target = any(kw in content for kw in keywords_lower)
+                # 判断是否命中全球宏观关键词
+                hit_macro = any(mkw in content for mkw in macro_keywords)
+                
+                if hit_target or hit_macro:
                     # 识别是否包含国际市场关键词
                     intl_keywords = ["cbot", "usda", "巴西", "阿根廷", "马来西亚", "美盘", "出口", "国际", "海外", "欧美", "全球"]
-                    is_intl = any(ik in content for ik in intl_keywords)
-                    item['is_intl'] = is_intl
+                    item['is_intl'] = any(ik in content for ik in intl_keywords)
+                    
+                    # 打上宏观预警标签
+                    if hit_macro:
+                        item['content'] = "[全球宏观预警] " + item['content']
+                        
                     filtered_news.append(item)
-            
             # 如果过滤后为空，尝试更宽泛的匹配或返回兜底
             if not filtered_news and all_news:
                 logger.info("关键词过滤结果为空，使用前10条通用新闻作为兜底。")
