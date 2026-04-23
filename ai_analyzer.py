@@ -1,4 +1,11 @@
 import os
+import sys
+import io
+
+# 强制设置标准输出编码为 UTF-8
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from openai import OpenAI
 from dotenv import load_dotenv
 import logging
@@ -61,7 +68,52 @@ class AIAnalyzer:
             logger.error(f"调用 DeepSeek API 失败: {e}")
             return f"AI 分析失败: {e}"
 
+    def analyze_news_impact(self, news_items):
+        """对当前新闻进行深度期货影响分析"""
+        if not news_items:
+            return "暂无新闻内容进行分析。"
+
+        # 将新闻列表转换为字符串
+        news_text = ""
+        for i, item in enumerate(news_items[:15]): # 取最近 15 条
+            source = item.get('source', '未知来源')
+            news_text += f"{i+1}. [{item['pub_date']}][{source}] {item['content']}\n"
+
+        prompt = f"""你是一个顶尖的期货市场研究员，擅长从海量资讯中提炼核心矛盾。请针对以下最新的市场快讯，进行深度解析。
+
+### 最新快讯内容：
+{news_text}
+
+### 输出要求：
+1. **使用 Markdown 格式**。
+2. **报告结构**：
+    - **【核心矛盾点拨】**：用一句话总结当前市场最关键的博弈核心（如地缘溢价、供需缺口、政策预期等）。
+    - **【品种影响矩阵】**：
+        - 列出 3-5 个受影响最显著的品种（如玉米、大豆、原油等）。
+        - 格式：**[品种名称]** - 影响：[看多/看空/震荡] - 逻辑：[简述原因]。
+    - **【宏观环境扫描】**：分析当前的金融环境（利率、汇率）对商品市场的整体扰动。
+    - **【操作建议/风险警示】**：给出一句极具洞察力的风险提示。
+3. **排版规范**：各模块内容排版整齐，重点信息加粗，适合在深色调看板上阅读。
+4. **风格**：专业、深刻、一针见血。
+"""
+
+        try:
+            logger.info("正在调用 DeepSeek API 进行新闻深度分析...")
+            response = self.client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[
+                    {"role": "system", "content": "你是一个敏锐的期货市场策略分析师。"},
+                    {"role": "user", "content": prompt},
+                ],
+                stream=False
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            logger.error(f"新闻深度分析失败: {e}")
+            return f"AI 深度分析失败: {e}"
+
     def generate_commodity_report(self, quotes_data, news_data, keywords):
+
         """生成大宗商品专项研报"""
         if not news_data:
             return "暂无相关大宗商品新闻数据。"
