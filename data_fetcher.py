@@ -14,15 +14,72 @@ class DataFetcher:
     
     def __init__(self):
         # 品种名称与新浪代码缩写映射 (主力合约通常以 0 结尾)
+        # 农产品期货品种分类
         self.symbol_map = {
-            "豆粕": "M0", "菜粕": "RM0", "玉米": "C0", 
-            "生猪": "LH0", "白糖": "SR0", "棉花": "CF0", 
-            "甲醇": "MA0", "尿素": "UR0", "PTA": "TA0", 
-            "纯碱": "SA0", "PVC": "V0",
-            "淀粉": "CS0", "大豆": "A0", "豆油": "Y0",
-            "乙醇": "EB0",
-            "生物柴": "P0"
+            # 蛋白粕类
+            "豆粕": "M0", "菜粕": "RM0", "豆二": "B0",
+            # 油脂类
+            "豆油": "Y0", "棕榈油": "P0", "菜籽油": "OI0", "花生": "PK0",
+            # 谷物类
+            "玉米": "C0", "淀粉": "CS0", "大豆": "A0", "强麦": "WH0", "普麦": "PM0", "早籼稻": "RI0", "晚籼稻": "LR0", "粳稻": "JR0",
+            # 软商品类
+            "白糖": "SR0", "棉花": "CF0", "苹果": "AP0", "红枣": "CJ0", "花生": "PK0",
+            # 畜牧类
+            "生猪": "LH0", "鸡蛋": "JD0",
+            # 能化类
+            "甲醇": "MA0", "尿素": "UR0", "PTA": "TA0", "纯碱": "SA0", "PVC": "V0",
+            "苯乙烯": "EB0", "乙二醇": "EG0", "短纤": "PF0", "LPG": "PG0", "聚丙烯": "PP0", "塑料": "L0",
+            "原油": "SC0", "燃油": "FU0", "低硫燃油": "LU0", "沥青": "BU0",
+            # 黑色建材
+            "螺纹钢": "RB0", "热卷": "HC0", "铁矿石": "I0", "焦炭": "J0", "焦煤": "JM0", "玻璃": "FG0", "硅铁": "SF0", "锰硅": "SM0",
+            # 有色金属
+            "沪铜": "CU0", "沪铝": "AL0", "沪锌": "ZN0", "沪镍": "NI0", "沪铅": "PB0", "沪锡": "SN0",
+            "氧化铝": "AO0", "工业硅": "SI0", "碳酸锂": "LC0",
+            # 贵金属
+            "黄金": "AU0", "白银": "AG0",
         }
+        
+        # 品种分类映射
+        self.category_map = {
+            # 蛋白粕类
+            "豆粕": "蛋白粕", "菜粕": "蛋白粕", "豆二": "蛋白粕",
+            # 油脂类
+            "豆油": "油脂", "棕榈油": "油脂", "菜籽油": "油脂", "花生": "油脂",
+            # 谷物类
+            "玉米": "谷物", "淀粉": "谷物", "大豆": "谷物", "强麦": "谷物", "普麦": "谷物", 
+            "早籼稻": "谷物", "晚籼稻": "谷物", "粳稻": "谷物",
+            # 软商品类
+            "白糖": "软商品", "棉花": "软商品", "苹果": "软商品", "红枣": "软商品",
+            # 畜牧类
+            "生猪": "畜牧", "鸡蛋": "畜牧",
+            # 能化类
+            "甲醇": "能化", "尿素": "能化", "PTA": "能化", "纯碱": "能化", "PVC": "能化",
+            "苯乙烯": "能化", "乙二醇": "能化", "短纤": "能化", "LPG": "能化", "聚丙烯": "能化", "塑料": "能化",
+            "原油": "能源", "燃油": "能源", "低硫燃油": "能源", "沥青": "能源",
+            # 黑色建材
+            "螺纹钢": "黑色", "热卷": "黑色", "铁矿石": "黑色", "焦炭": "黑色", "焦煤": "黑色", 
+            "玻璃": "建材", "硅铁": "黑色", "锰硅": "黑色",
+            # 有色金属
+            "沪铜": "有色", "沪铝": "有色", "沪锌": "有色", "沪镍": "有色", "沪铅": "有色", "沪锡": "有色",
+            "氧化铝": "有色", "工业硅": "有色", "碳酸锂": "新能源",
+            # 贵金属
+            "黄金": "贵金属", "白银": "贵金属",
+        }
+        
+        # 农产品期货完整列表（用于市场看板显示）
+        self.agricultural_symbols = [
+            # 蛋白粕类
+            "豆粕", "菜粕", "豆二",
+            # 油脂类
+            "豆油", "棕榈油", "菜籽油", "花生",
+            # 谷物类
+            "玉米", "淀粉", "大豆", "强麦", "普麦", "早籼稻", "晚籼稻", "粳稻",
+            # 软商品类
+            "白糖", "棉花", "苹果", "红枣",
+            # 畜牧类
+            "生猪", "鸡蛋",
+        ]
+        
         # 库存查询映射 (统一使用 EM 认可的符号)
         self.inventory_map = {
             "豆粕": "豆粕",
@@ -39,8 +96,13 @@ class DataFetcher:
             "淀粉": "玉米淀粉",
             "菜粕": "菜粕",
             "PVC": "PVC",
-            "乙醇": "玻璃", # 备选
-            "生物柴": "豆油", 
+            "棕榈油": "棕榈油",
+            "菜籽油": "菜籽油",
+            "花生": "花生",
+            "苹果": "苹果",
+            "红枣": "红枣",
+            "生猪": "生猪",
+            "鸡蛋": "鸡蛋",
         }
 
     def _get_row_data(self, row, candidates, index_fallback):
@@ -560,6 +622,180 @@ class DataFetcher:
             return output_path
         except Exception as e:
             logger.error(f"生成 {name} 趋势图失败：{e}")
+            return None
+
+    def calculate_technical_indicators(self, name, days=60):
+        """计算技术指标：MA、MACD、KDJ、布林带"""
+        try:
+            symbol = self.symbol_map.get(name)
+            if not symbol: return None
+            
+            df = self.get_futures_history(name, days=days)
+            if df is None or df.empty: return None
+            
+            df = df.copy()
+            df['date'] = pd.to_datetime(df['date'])
+            df['close'] = pd.to_numeric(df['close'], errors='coerce')
+            df['high'] = pd.to_numeric(df['high'], errors='coerce')
+            df['low'] = pd.to_numeric(df['low'], errors='coerce')
+            df = df.dropna(subset=['close', 'high', 'low'])
+            
+            if len(df) < 20: return None
+            
+            close = df['close']
+            high = df['high']
+            low = df['low']
+            
+            # MA (简单移动平均)
+            ma5 = close.rolling(window=5).mean()
+            ma20 = close.rolling(window=20).mean()
+            ma60 = close.rolling(window=60).mean() if len(close) >= 60 else None
+            
+            # EMA (指数移动平均，用于MACD)
+            ema12 = close.ewm(span=12, adjust=False).mean()
+            ema26 = close.ewm(span=26, adjust=False).mean()
+            
+            # MACD
+            macd = ema12 - ema26
+            signal = macd.ewm(span=9, adjust=False).mean()
+            histogram = macd - signal
+            
+            # KDJ
+            n = 9
+            low_n = low.rolling(window=n).min()
+            high_n = high.rolling(window=n).max()
+            rsv = (close - low_n) / (high_n - low_n) * 100
+            rsv = rsv.fillna(50)
+            
+            k = rsv.ewm(com=2, adjust=False).mean()
+            d = k.ewm(com=2, adjust=False).mean()
+            j = 3 * k - 2 * d
+            
+            # 布林带
+            bb_mid = close.rolling(window=20).mean()
+            bb_std = close.rolling(window=20).std()
+            bb_upper = bb_mid + 2 * bb_std
+            bb_lower = bb_mid - 2 * bb_std
+            
+            # 转换为列表格式
+            result = {
+                "symbol": name,
+                "dates": df['date'].dt.strftime('%Y-%m-%d').tolist()[-30:],
+                "price": close.tolist()[-30:],
+                "ma5": ma5.round(2).tolist()[-30:],
+                "ma20": ma20.round(2).tolist()[-30:],
+                "ma60": ma60.round(2).tolist()[-30:] if ma60 is not None else None,
+                "macd": {
+                    "dif": macd.round(2).tolist()[-30:],
+                    "dea": signal.round(2).tolist()[-30:],
+                    "histogram": histogram.round(3).tolist()[-30:]
+                },
+                "kdj": {
+                    "k": k.round(2).tolist()[-30:],
+                    "d": d.round(2).tolist()[-30:],
+                    "j": j.round(2).tolist()[-30:]
+                },
+                "bollinger": {
+                    "upper": bb_upper.round(2).tolist()[-30:],
+                    "mid": bb_mid.round(2).tolist()[-30:],
+                    "lower": bb_lower.round(2).tolist()[-30:]
+                }
+            }
+            
+            return result
+        except Exception as e:
+            logger.error(f"计算 {name} 技术指标失败：{e}")
+            return None
+
+    def get_spread_analysis(self, symbol1, symbol2, days=30):
+        """获取两个品种的价差分析"""
+        try:
+            df1 = self.get_futures_history(symbol1, days=days)
+            df2 = self.get_futures_history(symbol2, days=days)
+            
+            if df1 is None or df2 is None: return None
+            
+            df1 = df1.copy()
+            df2 = df2.copy()
+            df1['close'] = pd.to_numeric(df1['close'], errors='coerce')
+            df2['close'] = pd.to_numeric(df2['close'], errors='coerce')
+            
+            df1['date'] = pd.to_datetime(df1['date'])
+            df2['date'] = pd.to_datetime(df2['date'])
+            
+            merged = pd.merge(df1[['date', 'close']], df2[['date', 'close']], on='date', suffixes=('_1', '_2'))
+            merged = merged.sort_values('date')
+            
+            if len(merged) < 5: return None
+            
+            spread = merged['close_1'] - merged['close_2']
+            spread_pct = (spread / merged['close_2'] * 100).round(2)
+            
+            current_spread = round(spread.iloc[-1], 2)
+            current_spread_pct = round(spread_pct.iloc[-1], 2)
+            spread_mean = round(spread.mean(), 2)
+            spread_std = round(spread.std(), 2)
+            z_score = round((current_spread - spread_mean) / spread_std, 2) if spread_std != 0 else 0
+            
+            return {
+                "symbol1": symbol1,
+                "symbol2": symbol2,
+                "dates": merged['date'].dt.strftime('%Y-%m-%d').tolist(),
+                "price1": merged['close_1'].tolist(),
+                "price2": merged['close_2'].tolist(),
+                "spread": spread.round(2).tolist(),
+                "spread_pct": spread_pct.tolist(),
+                "current": {
+                    "spread": current_spread,
+                    "spread_pct": current_spread_pct,
+                    "z_score": z_score
+                },
+                "statistics": {
+                    "mean": spread_mean,
+                    "std": spread_std,
+                    "min": round(spread.min(), 2),
+                    "max": round(spread.max(), 2)
+                }
+            }
+        except Exception as e:
+            logger.error(f"价差分析失败 ({symbol1} vs {symbol2}): {e}")
+            return None
+
+    def get_price_ratio(self, symbol1, symbol2, days=30):
+        """获取两个品种的比价走势"""
+        try:
+            df1 = self.get_futures_history(symbol1, days=days)
+            df2 = self.get_futures_history(symbol2, days=days)
+            
+            if df1 is None or df2 is None: return None
+            
+            df1 = df1.copy()
+            df2 = df2.copy()
+            df1['close'] = pd.to_numeric(df1['close'], errors='coerce')
+            df2['close'] = pd.to_numeric(df2['close'], errors='coerce')
+            
+            df1['date'] = pd.to_datetime(df1['date'])
+            df2['date'] = pd.to_datetime(df2['date'])
+            
+            merged = pd.merge(df1[['date', 'close']], df2[['date', 'close']], on='date', suffixes=('_1', '_2'))
+            merged = merged.sort_values('date')
+            
+            if len(merged) < 5: return None
+            
+            ratio = (merged['close_1'] / merged['close_2']).round(4)
+            
+            return {
+                "symbol1": symbol1,
+                "symbol2": symbol2,
+                "dates": merged['date'].dt.strftime('%Y-%m-%d').tolist(),
+                "ratio": ratio.tolist(),
+                "current": round(ratio.iloc[-1], 4),
+                "mean": round(ratio.mean(), 4),
+                "min": round(ratio.min(), 4),
+                "max": round(ratio.max(), 4)
+            }
+        except Exception as e:
+            logger.error(f"比价分析失败 ({symbol1}/{symbol2}): {e}")
             return None
 
 if __name__ == "__main__":

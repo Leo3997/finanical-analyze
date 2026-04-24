@@ -1,0 +1,25 @@
+[
+  {
+    "id": "report_20260424114122",
+    "title": "玉米期货财经研报4.24",
+    "summary": "",
+    "content": "",
+    "category": "行业",
+    "author": "用户上传",
+    "publishDate": "2026-04-24",
+    "readTime": 1,
+    "views": 0,
+    "rating": 0,
+    "tags": [
+      "行业",
+      "用户上传"
+    ],
+    "riskLevel": "中",
+    "targetSymbols": [
+      "所有品种"
+    ],
+    "fileType": "pdf",
+    "filePath": "uploads/reports/report_20260424_114122_玉米期货投资分析4.24.pdf",
+    "createdAt": "2026-04-24 11:41:22"
+  }
+]

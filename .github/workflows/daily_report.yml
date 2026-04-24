@@ -2,8 +2,9 @@ name: Futures Daily Report
 
 on:
   schedule:
-    # 每天北京时间 08:30 运行 (UTC 00:30)
-    - cron: '30 0 * * *'
+    # 每个工作日北京时间 08:00 运行 (UTC 00:00)
+    # 周一至周五的早晨 8 点推送研报
+    - cron: '0 0 * * 1-5'
   workflow_dispatch: # 支持手动触发
 
 permissions:
@@ -28,11 +29,45 @@ jobs:
         pip install -r requirements.txt
         sudo apt-get update && sudo apt-get install -y fonts-wqy-zenhei
 
+    - name: Check if holiday (China)
+      id: holiday_check
+      run: |
+        python -c "
+        import chinese_calendar
+        from datetime import datetime
+        import os
+        
+        now = datetime.now()
+        is_holiday = chinese_calendar.is_holiday(now)
+        is_workday = chinese_calendar.is_workday(now)
+        
+        print(f'当前日期：{now.strftime(\"%Y-%m-%d\")}')
+        print(f'是否节假日：{is_holiday}')
+        print(f'是否工作日：{is_workday}')
+        
+        # 如果是节假日，设置标志
+        if is_holiday:
+            print('今日为节假日，跳过执行')
+            with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
+                f.write('skip=true\n')
+        else:
+            with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
+                f.write('skip=false\n')
+        "
 
     - name: Run Daily Report (Prepare & Notify)
+      if: steps.holiday_check.outputs.skip != 'true'
       env:
         DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
         TARGET_SYMBOLS: ${{ secrets.TARGET_SYMBOLS }}
         GITHUB_REPOSITORY: ${{ github.repository }}
       run: python main.py --step all
+
+    - name: Upload workflow state (Optional)
+      if: failure() || success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: workflow-state
+        path: workflow_state.json
+        retention-days: 7

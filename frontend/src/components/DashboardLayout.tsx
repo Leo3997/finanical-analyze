@@ -91,7 +91,12 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
             active={activeView === 'analysis'}
             onClick={() => onNavigate('analysis')}
           />
-          <SidebarItem icon={FileText} label="财经研报" />
+          <SidebarItem 
+            icon={FileText} 
+            label="财经研报" 
+            active={activeView === 'reports'} 
+            onClick={() => onNavigate('reports')}
+          />
           <SidebarItem icon={Settings} label="系统设置" />
         </nav>
 
@@ -120,7 +125,7 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
               <span className="text-[#5a5a5a]">终端</span>
               <span className="text-[#262630]">/</span>
               <span className="text-[#8a8a8a]">
-                {activeView === 'dashboard' ? '市场看板' : activeView === 'news' ? '国际局势' : '行情分析'}
+                {activeView === 'dashboard' ? '市场看板' : activeView === 'news' ? '国际局势' : activeView === 'analysis' ? '行情分析' : activeView === 'reports' ? '财经研报' : '市场看板'}
               </span>
             </div>
           </div>

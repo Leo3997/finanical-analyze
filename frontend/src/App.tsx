@@ -9,12 +9,13 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { Badge } from '@/components/ui/badge'
 import { NewsView } from './components/NewsView'
 import { MarketAnalysisView } from './components/MarketAnalysisView'
+import { FinancialReportView } from './components/FinancialReportView'
 
 const API_BASE = "http://localhost:5000";
 const CORE_SYMBOLS = ["玉米", "淀粉", "乙醇", "大豆", "豆粕", "豆油", "生物柴"];
 
 function App() {
-  const [activeView, setActiveView] = useState("dashboard")
+  const [activeView, setActiveView] = useState("reports")
   const [loading, setLoading] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const [report, setReport] = useState<string>('')
@@ -106,10 +107,10 @@ function App() {
   const renderContent = () => {
     if (activeView === "news") {
       return <NewsView />;
-    }
-
-    if (activeView === "analysis") {
+    } else if (activeView === "analysis") {
       return <MarketAnalysisView />;
+    } else if (activeView === "reports") {
+      return <FinancialReportView />;
     }
 
     return (
