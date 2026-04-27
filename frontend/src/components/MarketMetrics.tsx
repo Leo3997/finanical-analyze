@@ -93,16 +93,15 @@ const MetricCard = ({ title, value, change, isPositive, isFavorite, category, on
   
   return (
     <Card 
-      className={`terminal-panel relative overflow-hidden group cursor-pointer card-hover-glow rounded-xl animate-float-up stagger-${Math.min(index + 1, 6)}`}
-      style={{ opacity: 0 }}
+      className="terminal-panel relative overflow-hidden group cursor-pointer rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[var(--gold)]/5"
       onClick={() => onSelect(title)}
       id={`metric-card-${title}`}
     >
       {/* Top accent line */}
-      <div className={`absolute top-0 left-0 right-0 h-px ${isPositive ? 'bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent' : 'bg-gradient-to-r from-transparent via-red-500/50 to-transparent'}`} />
+      <div className={`absolute top-0 left-0 right-0 h-px transition-colors duration-300 ${isPositive ? 'bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent' : 'bg-gradient-to-r from-transparent via-red-500/50 to-transparent'}`} />
       
       {/* 开盘状态指示器 */}
-      <div className={`absolute top-0 left-0 bottom-0 w-1 ${
+      <div className={`absolute top-0 left-0 bottom-0 w-1 transition-colors duration-300 ${
         marketStatus.isOpen 
           ? 'bg-gradient-to-b from-emerald-500 to-emerald-600' 
           : 'bg-gradient-to-b from-[#262630] to-[#1a1a20]'
@@ -182,11 +181,14 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
   const [selectedCategory, setSelectedCategory] = useState<string>("全部");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        if (isInitialLoad) {
+          setLoading(true);
+        }
         // 使用相对路径，通过 Vite 代理访问后端
         const API_BASE = "";
         
@@ -216,6 +218,9 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
         }
       } finally {
         setLoading(false);
+        if (isInitialLoad) {
+          setIsInitialLoad(false);
+        }
       }
     };
     fetchData();
@@ -339,7 +344,7 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
       </div>
 
       {/* Metric cards grid - Mobile responsive */}
-      {loading ? (
+      {loading && isInitialLoad ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-3">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="terminal-panel rounded-xl p-3 sm:p-4 h-[90px] sm:h-[100px] animate-pulse">
@@ -353,7 +358,7 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-3">
           {sortedMetrics.map((metric, i) => (
             <MetricCard 
-              key={metric.title} 
+              key={`card-${metric.title}`} 
               {...metric} 
               index={i}
               onSelect={onSelect}

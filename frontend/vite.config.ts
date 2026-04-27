@@ -13,10 +13,6 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // 允许外网访问
     port: 5173,
-    hmr: {
-      host: '10.148.0.105', // 指定 HMR 主机地址
-      port: 5173,
-    },
     cors: true, // 允许跨域
     // 代理配置：将 /api 请求转发到后端
     proxy: {

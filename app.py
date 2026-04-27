@@ -201,6 +201,58 @@ def analyze_current_news():
         logger.error(f"AI 新闻分析失败: {e}")
         return jsonify({"status": "Error", "message": str(e)}), 500
 
+@app.route('/api/intraday')
+def get_intraday():
+    """获取品种日内分时数据或日K线数据（用于 K 线图和分时图）"""
+    # 修复中文参数编码问题
+    symbol_param = request.args.get('symbol', '豆粕')
+    try:
+        # 尝试正确解码中文字符
+        symbol = symbol_param.encode('latin1').decode('utf-8')
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        symbol = symbol_param  # 如果解码失败，使用原始值
+    
+    period = request.args.get('period', '1')  # '1' = 1分钟, 'daily' = 日K
+    try:
+        if period == 'daily':
+            # 获取日K线数据（最近10天）
+            df = fetcher.get_futures_history(symbol, days=10)
+            if df is not None and not df.empty:
+                data = []
+                for _, row in df.iterrows():
+                    # 提取完整日期 YYYY-MM-DD
+                    date_str = str(row['date']).split()[0]
+                    data.append({
+                        "time": date_str,  # 完整日期
+                        "open": float(row['open']),
+                        "high": float(row['high']),
+                        "low": float(row['low']),
+                        "close": float(row['close']),
+                        "volume": int(row['volume']) if 'volume' in row else 0
+                    })
+                return jsonify({"status": "Success", "data": data})
+            return jsonify({"status": "Error", "message": "未找到日K线数据"}), 404
+        else:
+            # 获取1分钟分时数据
+            df = fetcher.get_futures_intraday(symbol)
+            if df is not None and not df.empty:
+                # 格式化为前端易读的 JSON
+                data = []
+                for _, row in df.iterrows():
+                    data.append({
+                        "time": row['time'],
+                        "open": float(row['open']),
+                        "high": float(row['high']),
+                        "low": float(row['low']),
+                        "close": float(row['close']),
+                        "volume": int(row['volume'])
+                    })
+                return jsonify({"status": "Success", "data": data})
+            return jsonify({"status": "Error", "message": "未找到分时数据"}), 404
+    except Exception as e:
+        logger.error(f"获取数据失败：{e}")
+        return jsonify({"status": "Error", "message": str(e)}), 500
+
 @app.route('/api/history')
 def get_history():
     """获取品种历史走势数据"""
@@ -212,7 +264,7 @@ def get_history():
             history_data = []
             for _, row in df.iterrows():
                 history_data.append({
-                    "name": str(row['date']).split()[0][-5:], # 取月-日
+                    "name": str(row['date']).split()[0][-5:], # 取月 - 日
                     "value": float(row['close'])
                 })
             return jsonify({"status": "Success", "data": history_data})
@@ -780,4 +832,4 @@ if __name__ == "__main__":
         logger.error(f"添加定时任务失败：{e}")
     
     logger.info("Flask 服务启动...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=False)

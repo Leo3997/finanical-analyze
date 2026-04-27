@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试</title>
+</head>
+<body>
+    <h1>期货 API 测试</h1>
+    <div id="result"></div>
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>正在测试 API...</p>';
+            
+            try {
+                // 测试后端直连
+                const directRes = await fetch('http://localhost:5000/api/intraday?symbol=豆粕');
+                const directData = await directRes.json();
+                resultDiv.innerHTML += '<h3>后端直连 (端口 5000):</h3>';
+                resultDiv.innerHTML += '<pre>' + JSON.stringify({
+                    status: directData.status,
+                    dataLength: directData.data?.length
+                }, null, 2) + '</pre>';
+                
+                // 测试 Vite 代理
+                const proxyRes = await fetch('/api/intraday?symbol=豆粕');
+                const proxyData = await proxyRes.json();
+                resultDiv.innerHTML += '<h3>Vite 代理 (/api):</h3>';
+                resultDiv.innerHTML += '<pre>' + JSON.stringify({
+                    status: proxyData.status,
+                    dataLength: proxyData.data?.length
+                }, null, 2) + '</pre>';
+            } catch (e) {
+                resultDiv.innerHTML += '<p style="color:red">错误：' + e.message + '</p>';
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>

@@ -4,12 +4,12 @@ import { MarketMetrics } from './components/MarketMetrics'
 import { AIReportCard } from './components/AIReportCard'
 import { LiveLogs } from './components/LiveLogs'
 import { Button } from '@/components/ui/button'
-import { RefreshCw, Play, BarChart3 } from 'lucide-react'
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { RefreshCw, Play } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { NewsView } from './components/NewsView'
 import { MarketAnalysisView } from './components/MarketAnalysisView'
 import { FinancialReportView } from './components/FinancialReportView'
+import { FuturesChart } from './components/FuturesChart'
 
 // 使用相对路径，通过 Vite 代理访问后端
 const API_BASE = "";
@@ -22,6 +22,8 @@ function App() {
   const [report, setReport] = useState<string>('')
   const [chartData, setChartData] = useState<any[]>([])
   const [selectedSymbol, setSelectedSymbol] = useState("豆粕")
+  const [chartType, setChartType] = useState<'time' | 'candlestick'>('time')
+  const [klinePeriod, setKlinePeriod] = useState<'1' | 'daily'>('1')
   const [favorites, setFavorites] = useState<string[]>(() => {
     const saved = localStorage.getItem('favorites');
     return saved ? JSON.parse(saved) : ["玉米", "豆粕"];
@@ -49,15 +51,27 @@ function App() {
     }
   };
 
-  const fetchHistory = async (symbol: string) => {
+  const fetchHistory = async (symbol: string, period?: string) => {
     try {
-      const res = await fetch(`${API_BASE}/api/history?symbol=${encodeURIComponent(symbol)}`);
+      const p = period || klinePeriod;
+      // chartType 为 'time' 时分时图，否则为 K 线图
+      const isIntraday = chartType === 'time';
+      const url = isIntraday
+        ? `${API_BASE}/api/intraday?symbol=${encodeURIComponent(symbol)}`
+        : `${API_BASE}/api/intraday?symbol=${encodeURIComponent(symbol)}&period=${p}`;
+      console.log('[App] 请求 URL:', url, 'chartType:', chartType, 'period:', p);
+      const res = await fetch(url);
+      console.log('[App] 响应状态:', res.status);
       const result = await res.json();
+      console.log('[App] 分时图数据响应:', result);
       if (result.status === "Success") {
+        console.log('[App] 设置图表数据:', result.data?.length, '条，类型:', isIntraday ? '分时图' : 'K 线图');
         setChartData(result.data);
+      } else {
+        console.error('[App] 获取数据失败:', result.message);
       }
     } catch (e) {
-      console.error("Fetch history error:", e);
+      console.error("[App] Fetch intraday error:", e);
     }
   };
 
@@ -88,7 +102,7 @@ function App() {
 
   useEffect(() => {
     fetchHistory(selectedSymbol);
-  }, [selectedSymbol]);
+  }, [selectedSymbol, chartType, klinePeriod]);
 
   const handleManualTrigger = async () => {
     setLoading(true);
@@ -155,82 +169,22 @@ function App() {
 
           {/* Left column: Chart + Logs */}
           <div className="col-span-1 lg:col-span-8 space-y-4 lg:space-y-5">
-            {/* Price chart */}
-            <div className="terminal-panel rounded-xl p-4 sm:p-5 h-[380px] sm:h-[420px] flex flex-col">
+            {/* Price chart - Using new FuturesChart component */}
+            <div className="terminal-panel rounded-xl p-4 sm:p-5 h-[420px] sm:h-[460px] flex flex-col">
               {/* Accent line */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--gold)]/30 to-transparent" />
               
-              <div className="flex flex-col gap-3 mb-4 sm:mb-5">
-                <div className="flex items-center gap-2.5">
-                  <BarChart3 className="w-4 h-4 text-[var(--gold)]" />
-                  <span className="font-semibold text-sm text-[#e8e6e3]">{selectedSymbol}</span>
-                  <span className="text-[9px] sm:text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase">30D Price</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {CORE_SYMBOLS.map(s => (
-                    <Badge 
-                      key={s} 
-                      variant={selectedSymbol === s ? "default" : "secondary"}
-                      className={`cursor-pointer px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-data transition-all duration-200 ${
-                        selectedSymbol === s 
-                          ? "bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 hover:bg-[var(--gold)]/15 shadow-sm shadow-[var(--gold)]/5" 
-                          : "bg-transparent text-[#5a5a5a] border border-[#262630] hover:bg-white/[0.03] hover:text-[#8a8a8a] hover:border-[#3a3a3a]"
-                      }`}
-                      onClick={() => setSelectedSymbol(s)}
-                    >
-                      {s}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex-1 w-full relative z-10">
-                {chartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData}>
-                      <defs>
-                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#d4a853" stopOpacity={0.25}/>
-                          <stop offset="95%" stopColor="#d4a853" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e1e28" />
-                      <XAxis dataKey="name" stroke="#3a3a3a" fontSize={10} tickLine={false} axisLine={false} fontFamily="JetBrains Mono" />
-                      <YAxis 
-                        stroke="#3a3a3a" 
-                        fontSize={10} 
-                        tickLine={false} 
-                        axisLine={false} 
-                        domain={['auto', 'auto']}
-                        tickFormatter={(val) => val.toLocaleString()}
-                        fontFamily="JetBrains Mono"
-                        width={40}
-                      />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#131316', 
-                          border: '1px solid #262630', 
-                          borderRadius: '8px', 
-                          color: '#e8e6e3',
-                          fontFamily: 'JetBrains Mono',
-                          fontSize: '11px',
-                          boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
-                        }}
-                        itemStyle={{ color: '#d4a853' }}
-                        labelStyle={{ color: '#5a5a5a', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
-                      />
-                      <Area type="monotone" dataKey="value" stroke="#d4a853" strokeWidth={2} fillOpacity={1} fill="url(#colorValue)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="h-full flex items-center justify-center rounded-xl border border-dashed border-[#1e1e28]">
-                    <div className="text-center space-y-2 px-4">
-                      <p className="text-xs sm:text-sm text-[#5a5a5a]">正在加载 {selectedSymbol} 历史行情...</p>
-                      <p className="text-[9px] sm:text-[10px] font-data text-[#3a3a3a] tracking-wider uppercase">Loading chart data</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <FuturesChart 
+                data={chartData}
+                symbol={selectedSymbol}
+                chartType={chartType}
+                klinePeriod={klinePeriod}
+                onChartTypeChange={setChartType}
+                onKlinePeriodChange={(period) => {
+                  setKlinePeriod(period);
+                  fetchHistory(selectedSymbol, period);
+                }}
+              />
             </div>
 
             <LiveLogs logs={logs} />

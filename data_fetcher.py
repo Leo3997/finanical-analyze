@@ -415,7 +415,9 @@ class DataFetcher:
         """获取品种历史日线数据"""
         try:
             symbol = self.symbol_map.get(name)
-            if not symbol: return None
+            if not symbol:
+                logger.warning(f"未找到品种 {name} 的代码映射")
+                return None
             
             logger.info(f"正在获取 {name}({symbol}) 的历史数据...")
             df = ak.futures_zh_daily_sina(symbol=symbol)
@@ -424,6 +426,36 @@ class DataFetcher:
             return None
         except Exception as e:
             logger.error(f"获取 {name} 历史数据失败：{e}")
+            return None
+
+    def get_futures_intraday(self, name):
+        """获取品种日内分时数据"""
+        try:
+            symbol = self.symbol_map.get(name)
+            if not symbol: 
+                logger.warning(f"未找到品种 {name} 的代码映射")
+                return None
+            
+            logger.info(f"正在获取 {name}({symbol}) 的分时数据...")
+            
+            # 使用 AkShare 获取期货分时数据
+            df = ak.futures_zh_minute_sina(symbol=symbol, period="1")
+            if df is not None and not df.empty:
+                logger.info(f"获取到 {len(df)} 条分时数据")
+                # 处理数据，添加时间列
+                df['time'] = pd.to_datetime(df['datetime']).dt.strftime('%H:%M')
+                # 选择需要的列（AkShare 返回的列名：datetime, open, high, low, close, volume, hold）
+                df = df[['time', 'open', 'high', 'low', 'close', 'volume']].copy()
+                # 取最近 240 分钟的数据（覆盖日盘和夜盘）
+                result = df.tail(240)
+                logger.info(f"返回 {len(result)} 条数据")
+                return result
+            logger.warning(f"{name} 分时数据为空")
+            return None
+        except Exception as e:
+            logger.error(f"获取 {name} 分时数据失败：{e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return None
 
     def get_market_analysis_data(self, target_names):
@@ -628,7 +660,9 @@ class DataFetcher:
         """计算技术指标：MA、MACD、KDJ、布林带"""
         try:
             symbol = self.symbol_map.get(name)
-            if not symbol: return None
+            if not symbol:
+                logger.warning(f"未找到品种 {name} 的代码映射")
+                return None
             
             df = self.get_futures_history(name, days=days)
             if df is None or df.empty: return None
