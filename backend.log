@@ -735,3 +735,53 @@
 2026-04-27 17:33:53,047 - INFO - 127.0.0.1 - - [27/Apr/2026 17:33:53] "GET /api/logs HTTP/1.1" 200 -
 2026-04-27 17:33:53,049 - INFO - 127.0.0.1 - - [27/Apr/2026 17:33:53] "GET /api/state HTTP/1.1" 200 -
 2026-04-27 17:33:53,053 - INFO - 127.0.0.1 - - [27/Apr/2026 17:33:53] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:33:57,998 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:33:58,053 - INFO - 127.0.0.1 - - [27/Apr/2026 17:33:58] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:34:02,995 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:34:03,049 - INFO - 127.0.0.1 - - [27/Apr/2026 17:34:03] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:34:03,056 - INFO - 127.0.0.1 - - [27/Apr/2026 17:34:03] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:34:03,058 - INFO - 127.0.0.1 - - [27/Apr/2026 17:34:03] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:34:50,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:34:51,046 - INFO - 127.0.0.1 - - [27/Apr/2026 17:34:51] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:34:51,053 - INFO - 127.0.0.1 - - [27/Apr/2026 17:34:51] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:34:51,054 - INFO - 127.0.0.1 - - [27/Apr/2026 17:34:51] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:35:34,661 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:35:34,664 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:34] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:35:34,665 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:34] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:35:34,717 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:34] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:35:37,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:35:38,045 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:38] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:35:42,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:35:43,045 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:43] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:35:43,046 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:43] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:35:43,050 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:43] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:35:47,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:35:48,044 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:48] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:35:53,002 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:35:53,045 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:53] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:35:53,046 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:53] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:35:53,054 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:53] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:35:57,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:35:58,049 - INFO - 127.0.0.1 - - [27/Apr/2026 17:35:58] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:02,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:03,042 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:03] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:36:03,044 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:03] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:36:03,050 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:03] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:07,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:08,049 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:08] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:12,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:13,043 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:13] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:36:13,044 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:13] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:36:13,046 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:13] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:17,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:18,059 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:18] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:22,996 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:23,049 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:23] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:23,050 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:23] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:36:23,053 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:23] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:36:27,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:28,047 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:28] "GET /api/agricultural_quotes HTTP/1.1" 200 -
+2026-04-27 17:36:32,994 - INFO - 正在从新浪获取行情：['nf_M0', 'nf_RM0', 'nf_B0', 'nf_Y0', 'nf_P0', 'nf_OI0', 'nf_PK0', 'nf_C0', 'nf_CS0', 'nf_A0', 'nf_WH0', 'nf_PM0', 'nf_RI0', 'nf_LR0', 'nf_JR0', 'nf_SR0', 'nf_CF0', 'nf_AP0', 'nf_CJ0', 'nf_LH0', 'nf_JD0']
+2026-04-27 17:36:33,045 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:33] "GET /api/logs HTTP/1.1" 200 -
+2026-04-27 17:36:33,047 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:33] "GET /api/state HTTP/1.1" 200 -
+2026-04-27 17:36:33,048 - INFO - 127.0.0.1 - - [27/Apr/2026 17:36:33] "GET /api/agricultural_quotes HTTP/1.1" 200 -
