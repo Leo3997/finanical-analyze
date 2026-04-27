@@ -118,6 +118,21 @@
       radial-gradient(ellipse 600px 400px at 0% 0%, rgba(212, 168, 83, 0.06) 0%, transparent 70%),
       /* Subtle blue glow top-right */
       radial-gradient(ellipse 500px 400px at 100% 0%, rgba(91, 141, 239, 0.04) 0%, transparent 70%);
+    
+    /* Mobile optimizations */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Mobile touch optimizations */
+  @media (max-width: 640px) {
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    button, a {
+      touch-action: manipulation;
+    }
   }
 }
 
@@ -395,4 +410,57 @@ button, [role="button"], input[type="button"] {
     linear-gradient(rgba(38, 38, 48, 0.3) 1px, transparent 1px),
     linear-gradient(90deg, rgba(38, 38, 48, 0.3) 1px, transparent 1px);
   background-size: 48px 48px;
+}
+
+/* ───────────── MOBILE OPTIMIZATIONS ───────────── */
+@media (max-width: 640px) {
+  /* Disable hover effects on mobile for better performance */
+  .card-hover-glow:hover {
+    border-color: rgba(38, 38, 48, 0.5);
+    box-shadow: none;
+  }
+  
+  /* Reduce animation intensity on mobile */
+  .animate-float-up {
+    animation-duration: 0.3s;
+  }
+  
+  /* Optimize grid for mobile */
+  .grid-bg {
+    background-size: 32px 32px;
+  }
+  
+  /* Improve touch targets */
+  button, a {
+    min-height: 44px;
+  }
+  
+  /* Prevent text size adjustment on orientation change */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Smooth scrolling for mobile */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-bg {
+    background-size: 40px 40px;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .fixed, .sticky {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
 }

@@ -163,7 +163,8 @@ const QuickTicker = () => {
   useEffect(() => {
     const fetchQuotes = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/state");
+        // 使用相对路径，通过 Vite 代理访问后端
+        const res = await fetch("/api/state");
         const result = await res.json();
         if (result.status === "Success" && result.data?.quotes_data) {
           setQuotes(result.data.quotes_data.slice(0, 6));

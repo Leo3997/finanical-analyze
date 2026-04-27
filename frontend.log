@@ -1,0 +1,32 @@
+
+> frontend@0.0.0 dev
+> vite --host 0.0.0.0
+
+
+  VITE v8.0.10  ready in 245 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://10.148.0.105:5173/
+17:21:33 [vite] (client) hmr update /src/App.tsx, /src/index.css
+17:23:30 [vite] (client) hmr update /src/App.tsx, /src/index.css
+17:23:52 [vite] (client) hmr update /src/components/MarketMetrics.tsx, /src/index.css
+17:24:05 [vite] .env changed, restarting server...
+17:24:05 [vite] server restarted.
+17:24:06 [vite] .env changed, restarting server...
+17:24:06 [vite] server restarted.
+17:24:06 [vite] (client) [optimizer] bundling dependencies...
+17:24:08 [vite] (client) [optimizer] bundling dependencies...
+17:24:24 [vite] .env.local changed, restarting server...
+17:24:24 [vite] server restarted.
+17:24:24 [vite] .env.local changed, restarting server...
+17:24:25 [vite] server restarted.
+17:24:26 [vite] (client) [optimizer] bundling dependencies...
+17:24:44 [vite] vite.config.ts changed, restarting server...
+17:24:44 [vite] (client) Re-optimizing dependencies because vite config has changed
+17:24:44 [vite] server restarted.
+17:25:10 [vite] (client) hmr update /src/App.tsx, /src/index.css
+17:25:25 [vite] (client) hmr update /src/components/MarketMetrics.tsx, /src/index.css
+17:27:24 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+17:27:42 [vite] (client) hmr update /src/components/MarketAnalysisView.tsx, /src/index.css
+17:28:24 [vite] (client) hmr update /src/components/FinancialReportView.tsx, /src/index.css
+17:28:35 [vite] (client) hmr update /src/index.css, /src/components/IntelligencePanel.tsx

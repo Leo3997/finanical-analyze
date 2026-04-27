@@ -28,7 +28,8 @@ import {
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const API_BASE = "http://localhost:5000";
+// 使用相对路径，通过 Vite 代理访问后端
+const API_BASE = "";
 
 interface FinancialReport {
   id: string;

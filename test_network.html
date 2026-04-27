@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络访问测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .success {
+            border-left: 4px solid #4ade80;
+        }
+        .info {
+            border-left: 4px solid #60a5fa;
+        }
+        .test-result {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .check {
+            color: #4ade80;
+            font-size: 24px;
+        }
+        .loading {
+            color: #fbbf24;
+            font-size: 24px;
+        }
+        .error {
+            color: #f87171;
+            font-size: 24px;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 网络访问测试页面</h1>
+        
+        <div class="status success">
+            <h2>✅ 恭喜！您已成功访问服务器</h2>
+            <p>这说明网络连通性正常，可以从其他设备访问期货看板应用。</p>
+        </div>
+        
+        <div class="status info">
+            <h3>📊 服务器信息</h3>
+            <div class="test-result">
+                <span class="check">✓</span>
+                <span>服务器 IP: <strong>10.148.0.105</strong></span>
+            </div>
+            <div class="test-result">
+                <span class="check">✓</span>
+                <span>前端端口：<strong>5174</strong></span>
+            </div>
+            <div class="test-result">
+                <span class="check">✓</span>
+                <span>后端端口：<strong>5000</strong></span>
+            </div>
+            <div class="test-result">
+                <span class="check">✓</span>
+                <span>访问协议：<strong>HTTP</strong></span>
+            </div>
+        </div>
+        
+        <div class="status info">
+            <h3>🚀 访问期货看板</h3>
+            <p>现在您可以在手机或其他设备上访问：</p>
+            <div class="code">
+                http://10.148.0.105:5174
+            </div>
+            <p>或者使用以下按钮直接跳转：</p>
+            <button onclick="window.location.href='http://10.148.0.105:5174'">🎨 打开前端页面</button>
+            <button onclick="window.location.href='http://10.148.0.105:5000/api/state'">📊 查看后端 API</button>
+        </div>
+        
+        <div class="status info">
+            <h3>🔧 如果仍无法访问</h3>
+            <p>请尝试以下步骤：</p>
+            <ol>
+                <li>确认手机/平板连接到 <strong>同一个 WiFi</strong></li>
+                <li>在手机浏览器中输入：<code>http://10.148.0.105:5174</code></li>
+                <li>检查路由器是否启用了 <strong>AP 隔离</strong>（客户端隔离）</li>
+                <li>尝试关闭防火墙临时测试</li>
+                <li>确认设备 IP 在同一网段（10.148.x.x）</li>
+            </ol>
+        </div>
+        
+        <div class="status info">
+            <h3>📱 手机访问示例</h3>
+            <p>在 iPhone 或 Android 手机的浏览器中：</p>
+            <div class="code">
+                1. 打开 Safari/Chrome 浏览器<br>
+                2. 输入：http://10.148.0.105:5174<br>
+                3. 按回车，等待页面加载
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 自动测试 API 连通性
+        async function testAPI() {
+            try {
+                const response = await fetch('http://10.148.0.105:5000/api/state');
+                if (response.ok) {
+                    console.log('✅ 后端 API 访问成功');
+                } else {
+                    console.log('⚠️ 后端 API 返回异常状态码:', response.status);
+                }
+            } catch (error) {
+                console.log('❌ 后端 API 访问失败:', error.message);
+            }
+        }
+        
+        // 页面加载时测试
+        testAPI();
+    </script>
+</body>
+</html>

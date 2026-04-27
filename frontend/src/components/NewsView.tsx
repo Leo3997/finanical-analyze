@@ -27,7 +27,8 @@ export const NewsView = () => {
 
   const fetchNews = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/news");
+      // 使用相对路径，通过 Vite 代理访问后端
+      const res = await fetch("/api/news");
       const result = await res.json();
       if (result.status === "Success") {
         setNews(result.data);
@@ -43,7 +44,7 @@ export const NewsView = () => {
     if (news.length === 0) return;
     setAnalyzing(true);
     try {
-      const res = await fetch("http://localhost:5000/api/analyze_news", {
+      const res = await fetch("/api/analyze_news", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ news: news.slice(0, 15) })

@@ -187,8 +187,11 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
     const fetchData = async () => {
       try {
         setLoading(true);
+        // 使用相对路径，通过 Vite 代理访问后端
+        const API_BASE = "";
+        
         // 使用新的农产品行情接口
-        const res = await fetch("http://localhost:5000/api/agricultural_quotes");
+        const res = await fetch(`${API_BASE}/api/agricultural_quotes`);
         const result = await res.json();
         if (result.status === "Success" && result.data) {
           setData(result.data);
@@ -202,7 +205,8 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
         console.error("MarketMetrics fetch error:", e);
         // 降级：使用原有接口
         try {
-          const res = await fetch("http://localhost:5000/api/state");
+          const API_BASE = "";
+          const res = await fetch(`${API_BASE}/api/state`);
           const result = await res.json();
           if (result.status === "Success" && result.data.quotes_data) {
             setData(result.data.quotes_data);
@@ -255,18 +259,18 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
   });
 
   return (
-    <div className="space-y-4">
-      {/* Section header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+    <div className="space-y-3 lg:space-y-4">
+      {/* Section header - Mobile optimized */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-1 h-6 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
+          <div className="w-1 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
           <div>
             <h3 className="text-sm font-semibold text-[#e8e6e3] tracking-wide">市场实时看板</h3>
-            <p className="text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">农产品期货 · AGRICULTURAL FUTURES</p>
+            <p className="text-[9px] sm:text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">农产品期货 · AGRICULTURAL FUTURES</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* 分类筛选 */}
           <div className="flex items-center gap-1.5">
             <Filter className="w-3 h-3 text-[#5a5a5a]" />
@@ -292,24 +296,24 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
             }`}
           >
             <Heart className={`w-3 h-3 ${showFavoritesOnly ? "fill-current" : ""}`} />
-            自选
+            <span className="hidden sm:inline">自选</span>
             {favorites.length > 0 && (
-              <span className="ml-0.5 text-[10px]">({favorites.length})</span>
+              <span className="text-[9px] sm:text-[10px]">({favorites.length})</span>
             )}
           </button>
           
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--gold)]/5 border border-[var(--gold)]/10">
             <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] animate-pulse-gold" />
-            <span className="text-[10px] font-data text-[var(--gold-dim)] tracking-wider uppercase">Live</span>
+            <span className="text-[9px] sm:text-[10px] font-data text-[var(--gold-dim)] tracking-wider uppercase">Live</span>
           </div>
         </div>
       </div>
 
-      {/* 分类快速筛选标签 */}
+      {/* 分类快速筛选标签 - Scrollable on mobile */}
       <div className="flex flex-wrap gap-1.5">
         <Badge 
           variant={selectedCategory === "全部" ? "default" : "secondary"}
-          className={`cursor-pointer px-2.5 py-0.5 text-xs transition-all ${
+          className={`cursor-pointer px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs transition-all ${
             selectedCategory === "全部" 
               ? "bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20" 
               : "bg-transparent text-[#5a5a5a] border border-[#262630] hover:bg-white/[0.03] hover:text-[#8a8a8a]"
@@ -322,7 +326,7 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
           <Badge 
             key={cat}
             variant={selectedCategory === cat ? "default" : "secondary"}
-            className={`cursor-pointer px-2.5 py-0.5 text-xs transition-all ${
+            className={`cursor-pointer px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs transition-all ${
               selectedCategory === cat 
                 ? categoryColors[cat]?.replace("/10", "/20") + " border-current" 
                 : "bg-transparent text-[#5a5a5a] border border-[#262630] hover:bg-white/[0.03] hover:text-[#8a8a8a]"
@@ -334,19 +338,19 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
         ))}
       </div>
 
-      {/* Metric cards grid */}
+      {/* Metric cards grid - Mobile responsive */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-3">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="terminal-panel rounded-xl p-4 h-[100px] animate-pulse">
-              <div className="h-3 w-16 bg-[#1e1e28] rounded mb-3" />
-              <div className="h-6 w-24 bg-[#1e1e28] rounded mb-2" />
-              <div className="h-4 w-16 bg-[#1e1e28] rounded" />
+            <div key={i} className="terminal-panel rounded-xl p-3 sm:p-4 h-[90px] sm:h-[100px] animate-pulse">
+              <div className="h-2.5 sm:h-3 w-14 sm:w-16 bg-[#1e1e28] rounded mb-2 sm:mb-3" />
+              <div className="h-5 sm:h-6 w-20 sm:w-24 bg-[#1e1e28] rounded mb-1.5 sm:mb-2" />
+              <div className="h-3.5 sm:h-4 w-12 sm:w-16 bg-[#1e1e28] rounded" />
             </div>
           ))}
         </div>
       ) : sortedMetrics.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 sm:gap-3">
           {sortedMetrics.map((metric, i) => (
             <MetricCard 
               key={metric.title} 

@@ -11,11 +11,12 @@ import { NewsView } from './components/NewsView'
 import { MarketAnalysisView } from './components/MarketAnalysisView'
 import { FinancialReportView } from './components/FinancialReportView'
 
-const API_BASE = "http://localhost:5000";
+// 使用相对路径，通过 Vite 代理访问后端
+const API_BASE = "";
 const CORE_SYMBOLS = ["玉米", "淀粉", "乙醇", "大豆", "豆粕", "豆油", "生物柴"];
 
 function App() {
-  const [activeView, setActiveView] = useState("reports")
+  const [activeView, setActiveView] = useState("dashboard")
   const [loading, setLoading] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const [report, setReport] = useState<string>('')
@@ -114,62 +115,63 @@ function App() {
     }
 
     return (
-      <div className="flex flex-col gap-6 animate-in fade-in duration-500">
-        {/* Top action bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col gap-4 lg:gap-6 animate-in fade-in duration-500">
+        {/* Top action bar - Mobile optimized */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-8 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
+            <div className="w-1 h-6 sm:h-8 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-[#e8e6e3]">市场概览</h2>
-              <p className="text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">Market Overview · Dashboard</p>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#e8e6e3]">市场概览</h2>
+              <p className="text-[9px] sm:text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">Market Overview · Dashboard</p>
             </div>
           </div>
-          <div className="flex gap-2.5">
+          <div className="flex gap-2 w-full sm:w-auto">
             <Button 
               variant="outline" 
-              className="border-[#262630] bg-transparent hover:bg-white/[0.03] hover:border-[var(--gold)]/20 text-[#7a7a85] hover:text-[#b0aca5] transition-all text-xs h-9"
+              className="border-[#262630] bg-transparent hover:bg-white/[0.03] hover:border-[var(--gold)]/20 text-[#7a7a85] hover:text-[#b0aca5] transition-all text-xs h-9 flex-1 sm:flex-none"
               onClick={() => { fetchState(); fetchLogs(); fetchHistory(selectedSymbol); }}
               id="refresh-btn"
             >
-              <RefreshCw className="w-3.5 h-3.5 mr-2" /> 刷新
+              <RefreshCw className="w-3.5 h-3.5 sm:mr-2" /> <span className="hidden sm:inline">刷新</span>
             </Button>
             <Button 
               disabled={loading} 
               onClick={handleManualTrigger} 
-              className="bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] hover:from-[var(--gold)] hover:to-[var(--gold-bright)] text-[#09090b] font-semibold shadow-lg shadow-[var(--gold)]/10 border border-[var(--gold)]/30 text-xs h-9"
+              className="bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] hover:from-[var(--gold)] hover:to-[var(--gold-bright)] text-[#09090b] font-semibold shadow-lg shadow-[var(--gold)]/10 border border-[var(--gold)]/30 text-xs h-9 flex-1 sm:flex-none"
               id="trigger-report-btn"
             >
-              {loading ? <RefreshCw className="w-3.5 h-3.5 mr-2 animate-spin" /> : <Play className="w-3.5 h-3.5 mr-2" />}
-              触发研报
+              {loading ? <RefreshCw className="w-3.5 h-3.5 sm:mr-2 animate-spin" /> : <Play className="w-3.5 h-3.5 sm:mr-2" />}
+              <span className="hidden sm:inline">{loading ? '触发中' : '触发研报'}</span>
+              <span className="sm:hidden">触发</span>
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
           {/* Market metrics - full width */}
-          <div className="col-span-12">
+          <div className="col-span-1 lg:col-span-12">
             <MarketMetrics onSelect={setSelectedSymbol} favorites={favorites} onToggleFavorite={toggleFavorite} />
           </div>
 
           {/* Left column: Chart + Logs */}
-          <div className="col-span-12 lg:col-span-8 space-y-5">
+          <div className="col-span-1 lg:col-span-8 space-y-4 lg:space-y-5">
             {/* Price chart */}
-            <div className="terminal-panel rounded-xl p-5 h-[420px] flex flex-col">
+            <div className="terminal-panel rounded-xl p-4 sm:p-5 h-[380px] sm:h-[420px] flex flex-col">
               {/* Accent line */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--gold)]/30 to-transparent" />
               
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5">
+              <div className="flex flex-col gap-3 mb-4 sm:mb-5">
                 <div className="flex items-center gap-2.5">
                   <BarChart3 className="w-4 h-4 text-[var(--gold)]" />
                   <span className="font-semibold text-sm text-[#e8e6e3]">{selectedSymbol}</span>
-                  <span className="text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase">30D Price</span>
+                  <span className="text-[9px] sm:text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase">30D Price</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {CORE_SYMBOLS.map(s => (
                     <Badge 
                       key={s} 
                       variant={selectedSymbol === s ? "default" : "secondary"}
-                      className={`cursor-pointer px-2.5 py-0.5 text-xs font-data transition-all duration-200 ${
+                      className={`cursor-pointer px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-data transition-all duration-200 ${
                         selectedSymbol === s 
                           ? "bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 hover:bg-[var(--gold)]/15 shadow-sm shadow-[var(--gold)]/5" 
                           : "bg-transparent text-[#5a5a5a] border border-[#262630] hover:bg-white/[0.03] hover:text-[#8a8a8a] hover:border-[#3a3a3a]"
@@ -202,6 +204,7 @@ function App() {
                         domain={['auto', 'auto']}
                         tickFormatter={(val) => val.toLocaleString()}
                         fontFamily="JetBrains Mono"
+                        width={40}
                       />
                       <Tooltip 
                         contentStyle={{ 
@@ -210,20 +213,20 @@ function App() {
                           borderRadius: '8px', 
                           color: '#e8e6e3',
                           fontFamily: 'JetBrains Mono',
-                          fontSize: '12px',
+                          fontSize: '11px',
                           boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
                         }}
                         itemStyle={{ color: '#d4a853' }}
-                        labelStyle={{ color: '#5a5a5a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                        labelStyle={{ color: '#5a5a5a', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                       />
                       <Area type="monotone" dataKey="value" stroke="#d4a853" strokeWidth={2} fillOpacity={1} fill="url(#colorValue)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 ) : (
                   <div className="h-full flex items-center justify-center rounded-xl border border-dashed border-[#1e1e28]">
-                    <div className="text-center space-y-2">
-                      <p className="text-sm text-[#5a5a5a]">正在加载 {selectedSymbol} 历史行情...</p>
-                      <p className="text-[10px] font-data text-[#3a3a3a] tracking-wider uppercase">Loading chart data</p>
+                    <div className="text-center space-y-2 px-4">
+                      <p className="text-xs sm:text-sm text-[#5a5a5a]">正在加载 {selectedSymbol} 历史行情...</p>
+                      <p className="text-[9px] sm:text-[10px] font-data text-[#3a3a3a] tracking-wider uppercase">Loading chart data</p>
                     </div>
                   </div>
                 )}
@@ -234,7 +237,7 @@ function App() {
           </div>
 
           {/* Right column: AI Report */}
-          <div className="col-span-12 lg:col-span-4">
+          <div className="col-span-1 lg:col-span-4">
             <AIReportCard report={report} />
           </div>
         </div>
