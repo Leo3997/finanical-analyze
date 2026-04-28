@@ -3,7 +3,7 @@ import sys
 import logging
 from datetime import datetime
 from dotenv import load_dotenv
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory, request, Response, stream_with_context
 from flask_cors import CORS
 from flask_apscheduler import APScheduler
 import chinese_calendar
@@ -535,6 +535,80 @@ def check_price_alerts():
         return jsonify({"status": "Error", "message": str(e)}), 500
 
 
+@app.route('/api/ai_chat', methods=['POST'])
+def ai_chat():
+    """AI 分析师对话接口（流式输出）"""
+    try:
+        data = request.json
+        user_message = data.get('message', '')
+        history = data.get('history', [])
+        context = data.get('context', {})
+
+        if not user_message:
+            return jsonify({"status": "Error", "message": "请输入消息内容"}), 400
+
+        # 获取当前行情数据作为上下文
+        try:
+            target_symbols = ["豆粕", "玉米", "大豆", "白糖", "棉花", "甲醇", "PTA", "菜粕", "豆油", "棕榈油", "菜籽油", "淀粉", "生猪", "鸡蛋", "苹果", "红枣"]
+            quotes_data = fetcher.get_futures_quotes(target_symbols)
+            quotes_context = "\n".join([
+                f"{q['symbol']}: 最新价 {q['price']}, 涨跌幅 {q.get('change_pc', 0):.2f}%, 成交量 {q.get('volume', 0)}"
+                for q in quotes_data[:15]
+            ])
+        except Exception as e:
+            logger.warning(f"获取行情数据失败: {e}")
+            quotes_context = "暂无实时行情数据"
+
+        # 构建对话历史
+        messages = [
+            {"role": "system", "content": f"""你是一个专业的期货分析师，擅长结合当前市场形势为投资者提供具体的期货投资建议。
+
+### 当前市场行情：
+{quotes_context}
+
+### 回答要求：
+1. 结合当前实时行情数据进行分析
+2. 提供具体的投资建议，包括入场点位、止损位、目标位
+3. 分析技术面和基本面因素
+4. 提示相关风险
+5. 使用 Markdown 格式，排版清晰专业
+6. 回答要简洁干练，适合在手机端阅读
+7. 如果用户询问特定品种，重点分析该品种
+8. 给出明确的多空判断和仓位建议"""}
+        ]
+
+        # 添加历史对话（最近 10 条）
+        for msg in history[-10:]:
+            messages.append({"role": msg['role'], "content": msg['content']})
+
+        # 添加当前用户消息
+        messages.append({"role": "user", "content": user_message})
+
+        def generate():
+            try:
+                response = analyzer.client.chat.completions.create(
+                    model="deepseek-chat",
+                    messages=messages,
+                    stream=True
+                )
+
+                for chunk in response:
+                    if chunk.choices[0].delta.content:
+                        content = chunk.choices[0].delta.content
+                        yield f"data: {json.dumps({'content': content}, ensure_ascii=False)}\n\n"
+
+                yield "data: [DONE]\n\n"
+            except Exception as e:
+                logger.error(f"AI 对话流式输出失败: {e}")
+                yield f"data: {json.dumps({'content': f'分析失败: {str(e)}'}, ensure_ascii=False)}\n\n"
+                yield "data: [DONE]\n\n"
+
+        return Response(stream_with_context(generate()), mimetype='text/event-stream')
+
+    except Exception as e:
+        logger.error(f"AI 对话接口异常: {e}")
+        return jsonify({"status": "Error", "message": str(e)}), 500
+
 @app.route('/static/charts/<path:filename>')
 def serve_charts(filename):
     return send_from_directory('static/charts', filename)
@@ -832,4 +906,4 @@ if __name__ == "__main__":
         logger.error(f"添加定时任务失败：{e}")
     
     logger.info("Flask 服务启动...")
-    app.run(host='0.0.0.0', port=8080, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=False)

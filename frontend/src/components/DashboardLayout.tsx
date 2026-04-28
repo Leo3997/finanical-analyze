@@ -18,7 +18,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, mobile }: SidebarItem
     className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-200 group ${
       active 
         ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' 
-        : 'text-[#7a7a85] hover:bg-white/[0.03] hover:text-[#b0aca5] border border-transparent'
+        : 'text-[#e0ddd5] hover:bg-white/[0.03] hover:text-[#e8e6e3] border border-transparent'
     } ${mobile ? 'py-3 px-5' : ''}`}
   >
     <Icon className={`w-[18px] h-[18px] transition-colors ${active ? 'text-[var(--gold)]' : 'group-hover:text-[var(--gold-dim)]'}`} />
@@ -39,13 +39,13 @@ const LiveClock = () => {
   const s = time.getSeconds().toString().padStart(2, '0');
 
   return (
-    <div className="font-data text-xs tracking-wider text-[#7a7a85] flex items-center gap-1">
+    <div className="font-data text-xs tracking-wider text-[#e0ddd5] flex items-center gap-1">
       <Clock className="w-3.5 h-3.5 text-[var(--gold-dim)]" />
       <span className="text-[var(--gold)]">{h}</span>
       <span className="animate-blink text-[var(--gold-dim)]">:</span>
       <span className="text-[var(--gold)]">{m}</span>
       <span className="animate-blink text-[var(--gold-dim)]">:</span>
-      <span className="text-[#5a5a5a]">{s}</span>
+      <span className="text-[#d4d0c8]">{s}</span>
     </div>
   );
 };
@@ -114,11 +114,11 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
         {/* Bottom status panel */}
         <div className="mt-auto">
           <div className="rounded-lg border border-[#262630] bg-[#0d0d0f] p-3.5 space-y-3">
-            <div className="text-[10px] font-data text-[#5a5a5a] uppercase tracking-[0.15em]">系统状态</div>
+            <div className="text-[10px] font-data text-[#d4d0c8] uppercase tracking-[0.15em]">系统状态</div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs">
                 <div className="w-2 h-2 rounded-full bg-[#4ade80] shadow-[0_0_8px_rgba(74,222,128,0.4)] animate-pulse" />
-                <span className="text-[#8a8a8a]">已连接</span>
+                <span className="text-[#d4d0c8]">已连接</span>
               </div>
               <LiveClock />
             </div>
@@ -144,7 +144,7 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
             </div>
             <button 
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-lg hover:bg-white/[0.03] text-[#5a5a5a] hover:text-[#e8e6e3] transition-all"
+              className="p-2 rounded-lg hover:bg-white/[0.03] text-[#d4d0c8] hover:text-[#e8e6e3] transition-all"
             >
               <X className="w-5 h-5" />
             </button>
@@ -186,11 +186,11 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
           {/* Mobile Status Panel */}
           <div className="mt-auto pt-4 border-t border-[#1e1e28]">
             <div className="rounded-lg border border-[#262630] bg-[#0d0d0f] p-4 space-y-3">
-              <div className="text-[10px] font-data text-[#5a5a5a] uppercase tracking-[0.15em]">系统状态</div>
+              <div className="text-[10px] font-data text-[#d4d0c8] uppercase tracking-[0.15em]">系统状态</div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs">
                   <div className="w-2 h-2 rounded-full bg-[#4ade80] shadow-[0_0_8px_rgba(74,222,128,0.4)] animate-pulse" />
-                  <span className="text-[#8a8a8a]">已连接</span>
+                  <span className="text-[#d4d0c8]">已连接</span>
                 </div>
                 <LiveClock />
               </div>
@@ -207,16 +207,16 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
             {/* Mobile Menu Button */}
             <button 
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2 rounded-lg hover:bg-white/[0.03] text-[#5a5a5a] hover:text-[var(--gold-dim)] transition-all lg:hidden"
+              className="p-2 rounded-lg hover:bg-white/[0.03] text-[#d4d0c8] hover:text-[var(--gold-dim)] transition-all lg:hidden"
             >
               <Menu className="w-5 h-5" />
             </button>
             
             <h1 className="text-base font-semibold lg:hidden text-[#e8e6e3]">FinIntell</h1>
             <div className="hidden lg:flex items-center gap-2 text-sm">
-              <span className="text-[#5a5a5a]">终端</span>
+              <span className="text-[#d4d0c8]">终端</span>
               <span className="text-[#262630]">/</span>
-              <span className="text-[#8a8a8a]">
+              <span className="text-[#d4d0c8]">
                 {activeView === 'dashboard' ? '市场看板' : activeView === 'news' ? '国际局势' : activeView === 'analysis' ? '行情分析' : activeView === 'reports' ? '财经研报' : '市场看板'}
               </span>
             </div>
@@ -227,7 +227,7 @@ export const DashboardLayout = ({ children, activeView, onNavigate }: {
               <LiveClock />
             </div>
             <div className="h-5 w-px bg-[#262630] hidden lg:block" />
-            <button className="p-2 rounded-lg hover:bg-white/[0.03] text-[#5a5a5a] hover:text-[var(--gold-dim)] transition-all relative" id="notifications-btn">
+            <button className="p-2 rounded-lg hover:bg-white/[0.03] text-[#d4d0c8] hover:text-[var(--gold-dim)] transition-all relative" id="notifications-btn">
               <Bell className="w-4.5 h-4.5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--gold)] rounded-full border-2 border-[#09090b] animate-pulse-gold" />
             </button>

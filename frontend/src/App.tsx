@@ -136,13 +136,13 @@ function App() {
             <div className="w-1 h-6 sm:h-8 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#e8e6e3]">市场概览</h2>
-              <p className="text-[9px] sm:text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">Market Overview · Dashboard</p>
+              <p className="text-[9px] sm:text-[10px] font-data text-[#d4d0c8] tracking-wider uppercase mt-0.5">Market Overview · Dashboard</p>
             </div>
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button 
               variant="outline" 
-              className="border-[#262630] bg-transparent hover:bg-white/[0.03] hover:border-[var(--gold)]/20 text-[#7a7a85] hover:text-[#b0aca5] transition-all text-xs h-9 flex-1 sm:flex-none"
+              className="border-[#262630] bg-transparent hover:bg-white/[0.03] hover:border-[var(--gold)]/20 text-[#e0ddd5] hover:text-[#e8e6e3] transition-all text-xs h-9 flex-1 sm:flex-none"
               onClick={() => { fetchState(); fetchLogs(); fetchHistory(selectedSymbol); }}
               id="refresh-btn"
             >

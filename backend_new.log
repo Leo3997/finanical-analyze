@@ -1,0 +1,9 @@
+/home/greatwall/miniconda3/lib/python3.13/site-packages/py_mini_racer/py_mini_racer.py:15: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+2026-04-28 11:25:57,050 - INFO - Scheduler started
+2026-04-28 11:25:57,092 - INFO - Added job "daily_push" to job store "default"
+2026-04-28 11:25:57,093 - INFO - Flask 服务启动...
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 5000 is in use by another program. Either identify and stop that program, or start the server with a different port.

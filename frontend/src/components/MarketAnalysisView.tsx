@@ -6,11 +6,12 @@ import {
 import { 
   TrendingUp, TrendingDown, Zap, BarChart3, Layers, 
   Activity, Info, RefreshCw, Box, ArrowUpRight, ArrowDownRight,
-  Settings, Bell, Star, Trash2, Plus, X, ChevronDown, ChevronUp
+  Settings, Bell, Star, Trash2, Plus, X, ChevronDown, ChevronUp, MessageSquare
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { AIAnalystChat } from '@/components/AIAnalystChat';
 
 // 使用相对路径，通过 Vite 代理访问后端
 const API_BASE = "";
@@ -82,6 +83,7 @@ export const MarketAnalysisView = () => {
   const [alertType, setAlertType] = useState<'above' | 'below'>('above');
   const [alertPrice, setAlertPrice] = useState("");
   const [activeTab, setActiveTab] = useState<'technical' | 'spread' | 'favorites'>('technical');
+  const [showChat, setShowChat] = useState(false);
 
   const symbols = analysisData?.symbols || [];
   const agriculturalSymbols = ["豆粕", "菜粕", "豆二", "豆油", "棕榈油", "菜籽油", "玉米", "淀粉", "大豆", "白糖", "棉花", "苹果", "红枣", "生猪", "鸡蛋"];
@@ -254,7 +256,7 @@ export const MarketAnalysisView = () => {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
         <RefreshCw className="w-8 h-8 text-[var(--gold)] animate-spin" />
-        <p className="text-[#5a5a5a] font-data uppercase tracking-widest text-xs">Computing Market Intelligence...</p>
+        <p className="text-[#d4d0c8] font-data uppercase tracking-widest text-xs">Computing Market Intelligence...</p>
       </div>
     );
   }
@@ -273,14 +275,18 @@ export const MarketAnalysisView = () => {
           <div className="w-1 h-8 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-[#e8e6e3]">行情深度分析</h2>
-            <p className="text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">Deep Market Analysis</p>
+            <p className="text-[10px] font-data text-[#d4d0c8] tracking-wider uppercase mt-0.5">Deep Market Analysis</p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Badge variant="outline" className="border-[#262630] text-[#7a7a85] font-data text-[10px] uppercase h-7">
+          <Badge variant="outline" className="border-[#262630] text-[#e0ddd5] font-data text-[10px] uppercase h-7">
             {new Date().toLocaleTimeString()}
           </Badge>
-          <button onClick={fetchData} className="p-1.5 rounded-md border border-[#262630] hover:border-[var(--gold)]/30 text-[#5a5a5a] hover:text-[var(--gold)]">
+          <button onClick={() => setShowChat(true)} className="p-1.5 rounded-md border border-[#262630] hover:border-[var(--gold)]/30 text-[#d4d0c8] hover:text-[var(--gold)] transition-all relative group">
+            <MessageSquare className="w-4 h-4" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--gold)] rounded-full animate-pulse" />
+          </button>
+          <button onClick={fetchData} className="p-1.5 rounded-md border border-[#262630] hover:border-[var(--gold)]/30 text-[#d4d0c8] hover:text-[var(--gold)]">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
@@ -290,21 +296,21 @@ export const MarketAnalysisView = () => {
       <div className="flex flex-wrap gap-2 border-b border-[#1e1e28] pb-3">
         <button
           onClick={() => setActiveTab('technical')}
-          className={`px-4 py-2 rounded-t-lg text-xs font-semibold transition-all ${activeTab === 'technical' ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' : 'text-[#5a5a5a] hover:text-[#b0aca5]'}`}
+          className={`px-4 py-2 rounded-t-lg text-xs font-semibold transition-all ${activeTab === 'technical' ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' : 'text-[#d4d0c8] hover:text-[#e8e6e3]'}`}
         >
           <Zap className="w-3 h-3 inline mr-1.5" />
           技术指标
         </button>
         <button
           onClick={() => setActiveTab('spread')}
-          className={`px-4 py-2 rounded-t-lg text-xs font-semibold transition-all ${activeTab === 'spread' ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' : 'text-[#5a5a5a] hover:text-[#b0aca5]'}`}
+          className={`px-4 py-2 rounded-t-lg text-xs font-semibold transition-all ${activeTab === 'spread' ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' : 'text-[#d4d0c8] hover:text-[#e8e6e3]'}`}
         >
           <Layers className="w-3 h-3 inline mr-1.5" />
           价差分析
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`px-4 py-2 rounded-t-lg text-xs font-semibold transition-all ${activeTab === 'favorites' ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' : 'text-[#5a5a5a] hover:text-[#b0aca5]'}`}
+          className={`px-4 py-2 rounded-t-lg text-xs font-semibold transition-all ${activeTab === 'favorites' ? 'bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20' : 'text-[#d4d0c8] hover:text-[#e8e6e3]'}`}
         >
           <Star className="w-3 h-3 inline mr-1.5" />
           自选预警 {favorites.length > 0 && `(${favorites.length})`}
@@ -318,13 +324,13 @@ export const MarketAnalysisView = () => {
             <div className="flex items-center gap-3">
               <Zap className="w-4 h-4 text-[var(--gold)]" />
               <span className="text-sm font-semibold text-[#e8e6e3]">技术指标分析</span>
-              <span className="text-[10px] font-data text-[#5a5a5a] uppercase">MA / MACD / KDJ / Bollinger</span>
+              <span className="text-[10px] font-data text-[#d4d0c8] uppercase">MA / MACD / KDJ / Bollinger</span>
             </div>
             <div className="flex items-center gap-3">
-              <select value={selectedSymbol} onChange={(e) => setSelectedSymbol(e.target.value)} className="bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-xs rounded-md px-3 py-1.5">
+              <select value={selectedSymbol} onChange={(e) => setSelectedSymbol(e.target.value)} className="bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-xs rounded-md px-3 py-1.5">
                 {agriculturalSymbols.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
-              <button onClick={() => { setShowTechnical(!showTechnical); if (!showTechnical) fetchTechnicalData(selectedSymbol); }} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${showTechnical ? 'bg-[var(--gold)]/20 text-[var(--gold)] border border-[var(--gold)]/30' : 'bg-[#0d0d0f] text-[#5a5a5a] border border-[#262630]'}`}>
+              <button onClick={() => { setShowTechnical(!showTechnical); if (!showTechnical) fetchTechnicalData(selectedSymbol); }} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${showTechnical ? 'bg-[var(--gold)]/20 text-[var(--gold)] border border-[var(--gold)]/30' : 'bg-[#0d0d0f] text-[#d4d0c8] border border-[#262630]'}`}>
                 {showTechnical ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
             </div>
@@ -433,14 +439,14 @@ export const MarketAnalysisView = () => {
               <div className="flex items-center gap-3">
                 <Layers className="w-4 h-4 text-[var(--gold)]" />
                 <span className="text-sm font-semibold text-[#e8e6e3]">价差分析</span>
-                <span className="text-[10px] font-data text-[#5a5a5a] uppercase">Spread Analysis</span>
+                <span className="text-[10px] font-data text-[#d4d0c8] uppercase">Spread Analysis</span>
               </div>
               <div className="flex items-center gap-2">
-                <select value={spreadSymbol1} onChange={(e) => setSpreadSymbol1(e.target.value)} className="bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-xs rounded-md px-2 py-1.5">
+                <select value={spreadSymbol1} onChange={(e) => setSpreadSymbol1(e.target.value)} className="bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-xs rounded-md px-2 py-1.5">
                   {agriculturalSymbols.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <span className="text-[#5a5a5a] text-xs">vs</span>
-                <select value={spreadSymbol2} onChange={(e) => setSpreadSymbol2(e.target.value)} className="bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-xs rounded-md px-2 py-1.5">
+                <span className="text-[#d4d0c8] text-xs">vs</span>
+                <select value={spreadSymbol2} onChange={(e) => setSpreadSymbol2(e.target.value)} className="bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-xs rounded-md px-2 py-1.5">
                   {agriculturalSymbols.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
@@ -457,24 +463,24 @@ export const MarketAnalysisView = () => {
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-[#5a5a5a] uppercase">当前价差</span>
+                      <span className="text-[10px] text-[#d4d0c8] uppercase">当前价差</span>
                       <span className="text-lg font-bold font-data text-[#e8e6e3]">{spreadData.current.spread}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-[#5a5a5a] uppercase">价差百分比</span>
+                      <span className="text-[10px] text-[#d4d0c8] uppercase">价差百分比</span>
                       <span className={`text-sm font-data font-semibold ${spreadData.current.spread_pct >= 0 ? 'text-[#4ade80]' : 'text-[#f87171]'}`}>
                         {spreadData.current.spread_pct >= 0 ? '+' : ''}{spreadData.current.spread_pct}%
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] text-[#5a5a5a] uppercase">Z-Score</span>
+                      <span className="text-[10px] text-[#d4d0c8] uppercase">Z-Score</span>
                       <span className={`text-sm font-data ${Math.abs(spreadData.current.z_score) > 2 ? 'text-[#f87171]' : 'text-[#5b8def]'}`}>{spreadData.current.z_score}</span>
                     </div>
                     <div className="border-t border-[#262630] pt-3 space-y-2">
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#5a5a5a]">均值</span><span className="text-[#8a8a8a] font-data">{spreadData.statistics.mean}</span></div>
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#5a5a5a]">标准差</span><span className="text-[#8a8a8a] font-data">{spreadData.statistics.std}</span></div>
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#5a5a5a]">历史最低</span><span className="text-[#8a8a8a] font-data">{spreadData.statistics.min}</span></div>
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#5a5a5a]">历史最高</span><span className="text-[#8a8a8a] font-data">{spreadData.statistics.max}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#d4d0c8]">均值</span><span className="text-[#d4d0c8] font-data">{spreadData.statistics.mean}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#d4d0c8]">标准差</span><span className="text-[#d4d0c8] font-data">{spreadData.statistics.std}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#d4d0c8]">历史最低</span><span className="text-[#d4d0c8] font-data">{spreadData.statistics.min}</span></div>
+                      <div className="flex justify-between items-center text-[10px]"><span className="text-[#d4d0c8]">历史最高</span><span className="text-[#d4d0c8] font-data">{spreadData.statistics.max}</span></div>
                     </div>
                   </div>
                 </div>
@@ -483,7 +489,7 @@ export const MarketAnalysisView = () => {
                     <Zap className={`w-4 h-4 ${Math.abs(spreadData.current.z_score) > 2 ? 'text-[#f87171]' : 'text-[#5b8def]'}`} />
                     <span className="text-xs font-semibold text-[#e8e6e3]">信号解读</span>
                   </div>
-                  <p className="text-[10px] text-[#8a8a8a] leading-relaxed">
+                  <p className="text-[10px] text-[#d4d0c8] leading-relaxed">
                     {Math.abs(spreadData.current.z_score) > 2 ? '价差偏离均值超过2个标准差，存在均值回归机会。' : '价差处于正常波动区间，暂无明显套利机会。'}
                   </p>
                 </div>
@@ -530,23 +536,23 @@ export const MarketAnalysisView = () => {
                 <Star className="w-4 h-4 text-[var(--gold)]" />
                 <span className="text-sm font-semibold text-[#e8e6e3]">我的自选</span>
               </div>
-              <span className="text-[10px] text-[#5a5a5a] font-data">{favorites.length} 个品种</span>
+              <span className="text-[10px] text-[#d4d0c8] font-data">{favorites.length} 个品种</span>
             </div>
             {favorites.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {favorites.map(symbol => (
                   <div key={symbol} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--gold)]/10 border border-[var(--gold)]/20 text-xs">
                     <span className="text-[var(--gold)]">{symbol}</span>
-                    <button onClick={() => toggleFavorite(symbol)} className="text-[#5a5a5a] hover:text-[#f87171] transition-colors"><X className="w-3 h-3" /></button>
+                    <button onClick={() => toggleFavorite(symbol)} className="text-[#d4d0c8] hover:text-[#f87171] transition-colors"><X className="w-3 h-3" /></button>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-[#5a5a5a] text-xs">暂无自选品种<br /><span className="text-[#3a3a3a]">点击下方添加自选</span></div>
+              <div className="text-center py-8 text-[#d4d0c8] text-xs">暂无自选品种<br /><span className="text-[#c8c4bc]">点击下方添加自选</span></div>
             )}
             <div className="mt-4 pt-4 border-t border-[#262630]">
               <div className="flex items-center gap-2">
-                <select value={selectedSymbol} onChange={(e) => setSelectedSymbol(e.target.value)} className="flex-1 bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-xs rounded-md px-3 py-2">
+                <select value={selectedSymbol} onChange={(e) => setSelectedSymbol(e.target.value)} className="flex-1 bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-xs rounded-md px-3 py-2">
                   {agriculturalSymbols.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <Button onClick={() => toggleFavorite(selectedSymbol)} variant="outline" size="sm" className="border-[var(--gold)]/30 text-[var(--gold)] hover:bg-[var(--gold)]/10">
@@ -574,15 +580,15 @@ export const MarketAnalysisView = () => {
                       <div className={`w-1 h-6 rounded-full ${alert.type === 'above' ? 'bg-[#4ade80]' : 'bg-[#f87171]'}`} />
                       <div>
                         <span className="text-xs font-semibold text-[#e8e6e3]">{alert.symbol}</span>
-                        <div className="text-[10px] text-[#5a5a5a]">{alert.type === 'above' ? '突破' : '跌破'} {alert.price}</div>
+                        <div className="text-[10px] text-[#d4d0c8]">{alert.type === 'above' ? '突破' : '跌破'} {alert.price}</div>
                       </div>
                     </div>
-                    <button onClick={() => deleteAlert(alert.id)} className="text-[#5a5a5a] hover:text-[#f87171] transition-colors p-1"><Trash2 className="w-3 h-3" /></button>
+                    <button onClick={() => deleteAlert(alert.id)} className="text-[#d4d0c8] hover:text-[#f87171] transition-colors p-1"><Trash2 className="w-3 h-3" /></button>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-[#5a5a5a] text-xs">暂无价格预警<br /><span className="text-[#3a3a3a]">设置价格提醒，不错过重要行情</span></div>
+              <div className="text-center py-8 text-[#d4d0c8] text-xs">暂无价格预警<br /><span className="text-[#c8c4bc]">设置价格提醒，不错过重要行情</span></div>
             )}
           </div>
         </div>
@@ -598,18 +604,18 @@ export const MarketAnalysisView = () => {
             </div>
             <div className="flex-1 overflow-auto">
               {!analysisData || symbols.length === 0 ? (
-                <div className="h-full flex items-center justify-center border border-dashed border-[#262630] rounded-xl text-[#5a5a5a] text-xs font-data uppercase tracking-widest">Data Unavailable</div>
+                <div className="h-full flex items-center justify-center border border-dashed border-[#262630] rounded-xl text-[#d4d0c8] text-xs font-data uppercase tracking-widest">Data Unavailable</div>
               ) : (
                 <div className="min-w-[500px]">
                   <div className="grid grid-cols-[80px_1fr] gap-1">
                     <div />
                     <div className="grid" style={{ gridTemplateColumns: `repeat(${symbols.length}, 1fr)` }}>
-                      {symbols.map(s => <div key={s} className="text-[10px] font-data text-[#5a5a5a] text-center pb-2 truncate px-1">{s}</div>)}
+                      {symbols.map(s => <div key={s} className="text-[10px] font-data text-[#d4d0c8] text-center pb-2 truncate px-1">{s}</div>)}
                     </div>
                   </div>
                   {symbols.map(row => (
                     <div key={row} className="grid grid-cols-[80px_1fr] gap-1 mb-1">
-                      <div className="text-[10px] font-data text-[#5a5a5a] flex items-center pr-2 truncate">{row}</div>
+                      <div className="text-[10px] font-data text-[#d4d0c8] flex items-center pr-2 truncate">{row}</div>
                       <div className="grid" style={{ gridTemplateColumns: `repeat(${symbols.length}, 1fr)` }}>
                         {symbols.map(col => {
                           const val = matrix[row]?.[col] ?? 0;
@@ -617,7 +623,7 @@ export const MarketAnalysisView = () => {
                           const bgColor = val > 0 ? `rgba(212, 168, 83, ${absVal * 0.4})` : `rgba(91, 141, 239, ${absVal * 0.4})`;
                           return (
                             <div key={`${row}-${col}`} className="h-10 rounded-sm flex items-center justify-center text-[9px] font-data border border-white/[0.02] hover:scale-105 cursor-help" style={{ backgroundColor: bgColor }} title={`${row} vs ${col}: ${val}`}>
-                              <span className={absVal > 0.6 ? "text-white opacity-90" : "text-[#8a8a8a]"}>{val}</span>
+                              <span className={absVal > 0.6 ? "text-white opacity-90" : "text-[#d4d0c8]"}>{val}</span>
                             </div>
                           );
                         })}
@@ -643,15 +649,15 @@ export const MarketAnalysisView = () => {
                     <div key={s} className="flex items-center justify-between group">
                       <div className="flex items-center gap-3">
                         <div className={`w-1 h-3 rounded-full ${mom >= 0 ? 'bg-[var(--gold)]' : 'bg-[var(--cold-blue)]'}`} />
-                        <span className="text-xs font-semibold text-[#b0aca5] group-hover:text-[var(--gold)]">{s}</span>
+                        <span className="text-xs font-semibold text-[#e8e6e3] group-hover:text-[var(--gold)]">{s}</span>
                       </div>
                       <div className="flex items-center gap-6">
                         <div className="flex flex-col items-end">
-                          <span className="text-[10px] text-[#5a5a5a] uppercase">Vol</span>
-                          <span className="text-xs font-data text-[#8a8a8a]">{vol}%</span>
+                          <span className="text-[10px] text-[#d4d0c8] uppercase">Vol</span>
+                          <span className="text-xs font-data text-[#d4d0c8]">{vol}%</span>
                         </div>
                         <div className="w-16 flex flex-col items-end">
-                          <span className="text-[10px] text-[#5a5a5a] uppercase">5D</span>
+                          <span className="text-[10px] text-[#d4d0c8] uppercase">5D</span>
                           <div className={`flex items-center gap-0.5 text-xs font-data ${mom >= 0 ? 'text-[var(--gold)]' : 'text-[var(--cold-blue)]'}`}>
                             {mom >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}{mom > 0 ? '+' : ''}{mom}%
                           </div>
@@ -666,7 +672,7 @@ export const MarketAnalysisView = () => {
               <div className="absolute -right-6 -bottom-6 opacity-[0.03]"><Zap className="w-32 h-32" /></div>
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3 text-[var(--gold)]"><Info className="w-4 h-4" /><span className="text-xs font-bold uppercase tracking-wider">智能洞察</span></div>
-                <p className="text-xs text-[#a09c95] leading-relaxed">当前市场相关性显示，<span className="text-[var(--gold)]">农产品板块</span> 各品种走势趋于一致，建议关注 <span className="text-[#e8e6e3]">波动率</span> 较低的品种作为防御性配置。</p>
+                <p className="text-xs text-[#d4d0c8] leading-relaxed">当前市场相关性显示，<span className="text-[var(--gold)]">农产品板块</span> 各品种走势趋于一致，建议关注 <span className="text-[#e8e6e3]">波动率</span> 较低的品种作为防御性配置。</p>
               </div>
             </div>
           </div>
@@ -679,35 +685,42 @@ export const MarketAnalysisView = () => {
           <div className="terminal-panel rounded-xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-[#e8e6e3]">添加价格预警</h3>
-              <button onClick={() => setShowAlertModal(false)} className="text-[#5a5a5a] hover:text-[#e8e6e3]"><X className="w-5 h-5" /></button>
+              <button onClick={() => setShowAlertModal(false)} className="text-[#d4d0c8] hover:text-[#e8e6e3]"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-[10px] text-[#5a5a5a] uppercase tracking-wider block mb-2">品种</label>
-                <select value={alertSymbol} onChange={(e) => setAlertSymbol(e.target.value)} className="w-full bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-sm rounded-md px-3 py-2">
+                <label className="text-[10px] text-[#d4d0c8] uppercase tracking-wider block mb-2">品种</label>
+                <select value={alertSymbol} onChange={(e) => setAlertSymbol(e.target.value)} className="w-full bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-sm rounded-md px-3 py-2">
                   {agriculturalSymbols.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-[10px] text-[#5a5a5a] uppercase tracking-wider block mb-2">预警类型</label>
+                <label className="text-[10px] text-[#d4d0c8] uppercase tracking-wider block mb-2">预警类型</label>
                 <div className="flex gap-2">
-                  <button onClick={() => setAlertType('above')} className={`flex-1 py-2 rounded-md text-xs font-semibold transition-all ${alertType === 'above' ? 'bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/30' : 'bg-[#0d0d0f] text-[#5a5a5a] border border-[#262630]'}`}>
+                  <button onClick={() => setAlertType('above')} className={`flex-1 py-2 rounded-md text-xs font-semibold transition-all ${alertType === 'above' ? 'bg-[#4ade80]/20 text-[#4ade80] border border-[#4ade80]/30' : 'bg-[#0d0d0f] text-[#d4d0c8] border border-[#262630]'}`}>
                     <ArrowUpRight className="w-3 h-3 inline mr-1" />价格突破
                   </button>
-                  <button onClick={() => setAlertType('below')} className={`flex-1 py-2 rounded-md text-xs font-semibold transition-all ${alertType === 'below' ? 'bg-[#f87171]/20 text-[#f87171] border border-[#f87171]/30' : 'bg-[#0d0d0f] text-[#5a5a5a] border border-[#262630]'}`}>
+                  <button onClick={() => setAlertType('below')} className={`flex-1 py-2 rounded-md text-xs font-semibold transition-all ${alertType === 'below' ? 'bg-[#f87171]/20 text-[#f87171] border border-[#f87171]/30' : 'bg-[#0d0d0f] text-[#d4d0c8] border border-[#262630]'}`}>
                     <ArrowDownRight className="w-3 h-3 inline mr-1" />价格跌破
                   </button>
                 </div>
               </div>
               <div>
-                <label className="text-[10px] text-[#5a5a5a] uppercase tracking-wider block mb-2">预警价格</label>
-                <input type="number" value={alertPrice} onChange={(e) => setAlertPrice(e.target.value)} placeholder="请输入价格" className="w-full bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-sm rounded-md px-3 py-2 focus:outline-none focus:border-[var(--gold)]/30" />
+                <label className="text-[10px] text-[#d4d0c8] uppercase tracking-wider block mb-2">预警价格</label>
+                <input type="number" value={alertPrice} onChange={(e) => setAlertPrice(e.target.value)} placeholder="请输入价格" className="w-full bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-sm rounded-md px-3 py-2 focus:outline-none focus:border-[var(--gold)]/30" />
               </div>
               <Button onClick={createAlert} disabled={!alertSymbol || !alertPrice} className="w-full bg-[var(--gold)] hover:bg-[var(--gold)]/90 text-[#09090b] font-semibold">创建预警</Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* AI Analyst Chat Modal */}
+      <AIAnalystChat 
+        isOpen={showChat} 
+        onClose={() => setShowChat(false)} 
+        context={{ selectedSymbol, marketData: analysisData }}
+      />
     </div>
   );
 };

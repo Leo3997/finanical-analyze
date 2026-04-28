@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Globe, AlertTriangle, Clock, Search, Sparkles, Loader2, Zap, Wheat, Beaker, Activity } from "lucide-react";
+import { Globe, AlertTriangle, Clock, Search, Sparkles, Loader2, Zap, Wheat, Beaker, Activity, RefreshCw, FileText, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -17,6 +17,13 @@ interface NewsItem {
   categories?: string[];
 }
 
+interface SavedAnalysis {
+  id: string;
+  content: string;
+  timestamp: string;
+  newsCount: number;
+}
+
 export const NewsView = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +31,12 @@ export const NewsView = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [analyzing, setAnalyzing] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>(() => {
+    const saved = localStorage.getItem('ai_analyses');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showHistory, setShowHistory] = useState(false);
 
   const fetchNews = async () => {
     try {
@@ -40,6 +53,12 @@ export const NewsView = () => {
     }
   };
 
+  const handleManualRefresh = async () => {
+    setRefreshing(true);
+    await fetchNews();
+    setRefreshing(false);
+  };
+
   const handleDeepAnalysis = async () => {
     if (news.length === 0) return;
     setAnalyzing(true);
@@ -51,13 +70,42 @@ export const NewsView = () => {
       });
       const result = await res.json();
       if (result.status === "Success") {
-        setAiAnalysis(result.analysis);
+        const analysisContent = result.analysis;
+        setAiAnalysis(analysisContent);
+        
+        // 保存到历史记录
+        const newAnalysis: SavedAnalysis = {
+          id: Date.now().toString(),
+          content: analysisContent,
+          timestamp: new Date().toLocaleString('zh-CN'),
+          newsCount: news.length
+        };
+        const updated = [newAnalysis, ...savedAnalyses].slice(0, 10); // 最多保存10条
+        setSavedAnalyses(updated);
+        localStorage.setItem('ai_analyses', JSON.stringify(updated));
       }
     } catch (e) {
       console.error("AI Analysis error:", e);
     } finally {
       setAnalyzing(false);
     }
+  };
+
+  const loadSavedAnalysis = (analysis: SavedAnalysis) => {
+    setAiAnalysis(analysis.content);
+    setShowHistory(false);
+  };
+
+  const deleteSavedAnalysis = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = savedAnalyses.filter(a => a.id !== id);
+    setSavedAnalyses(updated);
+    localStorage.setItem('ai_analyses', JSON.stringify(updated));
+  };
+
+  const clearAllAnalyses = () => {
+    setSavedAnalyses([]);
+    localStorage.removeItem('ai_analyses');
   };
 
   useEffect(() => {
@@ -86,17 +134,41 @@ export const NewsView = () => {
             <div className="w-1 h-8 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
             <div>
               <h2 className="text-xl font-bold tracking-tight text-[#e8e6e3]">行业研报与全球快讯</h2>
-              <p className="text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">Intelligence Feed · Real-time</p>
+              <p className="text-[10px] font-data text-[#d4d0c8] tracking-wider uppercase mt-0.5">Intelligence Feed · Real-time</p>
             </div>
           </div>
           
           <div className="flex items-center gap-3 w-full lg:w-auto">
+            <button 
+              onClick={handleManualRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[#262630] bg-[#131316] text-[#e0ddd5] hover:text-[var(--gold)] hover:border-[var(--gold)]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+              title="手动刷新"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">{refreshing ? '刷新中' : '刷新'}</span>
+            </button>
+            {savedAnalyses.length > 0 && (
+              <button 
+                onClick={() => setShowHistory(!showHistory)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all text-xs ${
+                  showHistory 
+                    ? 'border-[var(--gold)]/30 bg-[var(--gold)]/10 text-[var(--gold)]' 
+                    : 'border-[#262630] bg-[#131316] text-[#e0ddd5] hover:text-[var(--gold)] hover:border-[var(--gold)]/30'
+                }`}
+                title="历史分析报告"
+              >
+                <FileText className="w-4 h-4" />
+                <span className="hidden sm:inline">历史报告</span>
+                <span className="text-[10px] font-data bg-[var(--gold)]/20 px-1.5 py-0.5 rounded">{savedAnalyses.length}</span>
+              </button>
+            )}
             <div className="relative flex-1 lg:w-72">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gold-dim)] font-data text-xs select-none">›</span>
               <input 
                 type="text" 
                 placeholder="搜索关键词..." 
-                className="w-full bg-[#131316] border border-[#262630] rounded-lg py-2 pl-7 pr-4 text-sm text-[#e8e6e3] font-data placeholder:text-[#3a3a3a] focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/30 focus:border-[var(--gold)]/30 transition-all"
+                className="w-full bg-[#131316] border border-[#262630] rounded-lg py-2 pl-7 pr-4 text-sm text-[#e8e6e3] font-data placeholder:text-[#c8c4bc] focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/30 focus:border-[var(--gold)]/30 transition-all"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 id="news-search-input"
@@ -159,7 +231,7 @@ export const NewsView = () => {
                 
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[#262630] bg-[#131316]">
                   <Activity className="w-3 h-3 text-[var(--gold-dim)]" />
-                  <span className="text-[10px] font-data text-[#5a5a5a] tracking-wider">{filteredNews.length}</span>
+                  <span className="text-[10px] font-data text-[#d4d0c8] tracking-wider">{filteredNews.length}</span>
                 </div>
               </div>
             </div>
@@ -177,17 +249,27 @@ export const NewsView = () => {
                         </div>
                         <div>
                           <CardTitle className="text-[var(--gold)] text-sm font-semibold">AI 智能板块深度分析</CardTitle>
-                          <p className="text-[10px] font-data text-[#5a5a5a] mt-0.5 tracking-wider uppercase">Powered by LLM</p>
+                          <p className="text-[10px] font-data text-[#d4d0c8] mt-0.5 tracking-wider uppercase">Powered by LLM</p>
                         </div>
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-7 px-2.5 text-[10px] font-data tracking-wider uppercase hover:bg-[var(--gold)]/10 text-[#5a5a5a] hover:text-[var(--gold-dim)] border border-transparent hover:border-[var(--gold)]/15 transition-all cursor-pointer"
-                        onClick={() => setAiAnalysis(null)}
-                      >
-                        关闭
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => setShowHistory(!showHistory)}
+                          className="h-7 px-2.5 text-[10px] font-data tracking-wider uppercase bg-[var(--gold)]/10 text-[var(--gold-dim)] border border-[var(--gold)]/15 rounded-md hover:bg-[var(--gold)]/20 transition-all cursor-pointer flex items-center gap-1"
+                        >
+                          <FileText className="w-3 h-3" />
+                          历史报告
+                          {showHistory ? <ChevronUp className="w-3 h-3 ml-1" /> : <ChevronDown className="w-3 h-3 ml-1" />}
+                        </button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-7 px-2.5 text-[10px] font-data tracking-wider uppercase hover:bg-[var(--gold)]/10 text-[#d4d0c8] hover:text-[var(--gold-dim)] border border-transparent hover:border-[var(--gold)]/15 transition-all cursor-pointer"
+                          onClick={() => setAiAnalysis(null)}
+                        >
+                          关闭
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -196,6 +278,81 @@ export const NewsView = () => {
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {aiAnalysis}
                         </ReactMarkdown>
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Saved Analyses History Panel */}
+            {showHistory && savedAnalyses.length > 0 && (
+              <div className="mx-4 my-4 animate-in slide-in-from-top duration-500 shrink-0">
+                <Card className="terminal-panel rounded-xl border-[var(--gold)]/20 overflow-hidden">
+                  <div className="h-px bg-gradient-to-r from-transparent via-[var(--gold)]/50 to-transparent" />
+                  <CardHeader className="bg-[var(--gold)]/[0.03] border-b border-[var(--gold)]/10 py-3 px-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-1.5 rounded-lg bg-[var(--gold)]/10 border border-[var(--gold)]/15">
+                          <FileText className="w-4 h-4 text-[var(--gold)]" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-[var(--gold)] text-sm font-semibold">历史分析报告</CardTitle>
+                          <p className="text-[10px] font-data text-[#d4d0c8] mt-0.5 tracking-wider uppercase">Saved Reports · {savedAnalyses.length} entries</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={clearAllAnalyses}
+                          className="h-7 px-2.5 text-[10px] font-data tracking-wider uppercase text-red-400/70 hover:text-red-400 hover:bg-red-400/10 border border-transparent hover:border-red-400/20 rounded-md transition-all cursor-pointer flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          清空全部
+                        </button>
+                        <button 
+                          onClick={() => setShowHistory(false)}
+                          className="h-7 px-2.5 text-[10px] font-data tracking-wider uppercase hover:bg-[var(--gold)]/10 text-[#d4d0c8] hover:text-[var(--gold-dim)] border border-transparent hover:border-[var(--gold)]/15 rounded-md transition-all cursor-pointer"
+                        >
+                          收起
+                        </button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <ScrollArea className="h-[400px] w-full">
+                      <div className="divide-y divide-[#1e1e28]">
+                        {savedAnalyses.map((analysis) => (
+                          <div 
+                            key={analysis.id}
+                            onClick={() => loadSavedAnalysis(analysis)}
+                            className="p-4 hover:bg-white/[0.02] transition-all cursor-pointer group flex items-start gap-3"
+                          >
+                            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--gold)]/5 border border-[var(--gold)]/10 flex items-center justify-center mt-1">
+                              <FileText className="w-5 h-5 text-[var(--gold-dim)]" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-sm font-medium text-[#e8e6e3] group-hover:text-[var(--gold)] transition-colors truncate">
+                                  AI 深度分析报告
+                                </span>
+                                <button 
+                                  onClick={(e) => deleteSavedAnalysis(analysis.id, e)}
+                                  className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-400/10 text-[#c8c4bc] hover:text-red-400 transition-all"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                              <div className="flex items-center gap-3 text-[10px] font-data text-[#c8c4bc]">
+                                <span>{analysis.timestamp}</span>
+                                <span>·</span>
+                                <span>{analysis.newsCount} 条新闻</span>
+                              </div>
+                              <p className="text-xs text-[#d4d0c8] mt-2 line-clamp-2 leading-relaxed">
+                                {analysis.content.substring(0, 150).replace(/[#*`_\[\]]/g, '')}...
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </ScrollArea>
                   </CardContent>
@@ -214,8 +371,8 @@ export const NewsView = () => {
                           <Loader2 className="w-7 h-7 animate-spin text-[var(--gold)]" />
                         </div>
                         <div className="space-y-1.5">
-                          <p className="text-sm text-[#8a8a8a]">同步全球产业链情报中...</p>
-                          <p className="text-[10px] font-data text-[#3a3a3a] tracking-wider uppercase">Fetching Intelligence Feed</p>
+                          <p className="text-sm text-[#d4d0c8]">同步全球产业链情报中...</p>
+                          <p className="text-[10px] font-data text-[#c8c4bc] tracking-wider uppercase">Fetching Intelligence Feed</p>
                         </div>
                       </div>
                     ) : (
@@ -253,22 +410,22 @@ export const NewsView = () => {
                                         </Badge>
                                       )}
                                       {item.source && (
-                                        <Badge variant="outline" className="text-[#5a5a5a] border-[#262630] px-2 py-0.5 h-5 text-[10px] font-data tracking-wider">
+                                        <Badge variant="outline" className="text-[#d4d0c8] border-[#262630] px-2 py-0.5 h-5 text-[10px] font-data tracking-wider">
                                           {item.source}
                                         </Badge>
                                       )}
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-[10px] font-data text-[#3a3a3a] tracking-wider">
+                                    <div className="flex items-center gap-1.5 text-[10px] font-data text-[#c8c4bc] tracking-wider">
                                       <Clock className="w-3 h-3" />
                                       {item.pub_date}
                                     </div>
                                   </div>
-                                  <p className={`text-sm leading-relaxed ${isGlobalAlert ? "text-[#c4c0b8] font-medium" : "text-[#8a8a8a]"}`}>
+                                  <p className={`text-sm leading-relaxed ${isGlobalAlert ? "text-[#c4c0b8] font-medium" : "text-[#d4d0c8]"}`}>
                                     {cleanContent}
                                   </p>
                                   <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                     {item.categories?.map(cat => (
-                                      <span key={cat} className="text-[9px] font-data uppercase tracking-widest text-[#3a3a3a] bg-[#131316] px-2 py-0.5 rounded border border-[#1e1e28] hover:border-[#262630] hover:text-[#5a5a5a] transition-all cursor-default">
+                                      <span key={cat} className="text-[9px] font-data uppercase tracking-widest text-[#c8c4bc] bg-[#131316] px-2 py-0.5 rounded border border-[#1e1e28] hover:border-[#262630] hover:text-[#d4d0c8] transition-all cursor-default">
                                         #{cat}
                                       </span>
                                     ))}
@@ -284,8 +441,8 @@ export const NewsView = () => {
                               <Search className="w-8 h-8 text-[#2a2a35]" />
                             </div>
                             <div className="space-y-1">
-                              <p className="text-sm text-[#5a5a5a]">当前板块暂无相关情报</p>
-                              <p className="text-[10px] font-data text-[#3a3a3a] tracking-wider uppercase">No matching entries</p>
+                              <p className="text-sm text-[#d4d0c8]">当前板块暂无相关情报</p>
+                              <p className="text-[10px] font-data text-[#c8c4bc] tracking-wider uppercase">No matching entries</p>
                             </div>
                           </div>
                         )}

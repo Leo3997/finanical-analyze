@@ -12,10 +12,10 @@ export const LiveLogs = ({ logs }: { logs: string[] }) => {
       <CardHeader className="py-2 px-3 sm:px-4 border-b border-[#1e1e28] flex flex-row items-center justify-between bg-[#0d0d0f]/60">
         <div className="flex items-center gap-2 sm:gap-2.5">
           <Terminal className="w-3.5 h-3.5 text-[var(--gold-dim)]" />
-          <CardTitle className="text-[9px] sm:text-[10px] font-data uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#5a5a5a]">System Log</CardTitle>
+          <CardTitle className="text-[9px] sm:text-[10px] font-data uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#d4d0c8]">System Log</CardTitle>
         </div>
         <div className="hidden sm:flex items-center gap-2">
-          <span className="text-[9px] sm:text-[10px] font-data text-[#3a3a3a] tracking-wider">{logs.length} entries</span>
+          <span className="text-[9px] sm:text-[10px] font-data text-[#c8c4bc] tracking-wider">{logs.length} entries</span>
           <div className="flex gap-1">
             <div className="w-2 h-2 rounded-full bg-red-500/30 border border-red-500/20" />
             <div className="w-2 h-2 rounded-full bg-yellow-500/30 border border-yellow-500/20" />

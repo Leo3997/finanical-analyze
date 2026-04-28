@@ -200,6 +200,49 @@ class DataFetcher:
             except Exception as e:
                 logger.warning(f"财联社全球电报获取失败：{e}")
 
+            # 数据源 1.5: 新浪财经全球新闻 (新增)
+            try:
+                df_sina_global = ak.stock_news_em(symbol="全球")
+                if df_sina_global is not None and not df_sina_global.empty:
+                    for _, row in df_sina_global.iterrows():
+                        title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                        content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                        pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                        
+                        final_content = content if content and len(content) > 10 else title
+                        if final_content and len(final_content) > 10:
+                            all_news.append({
+                                "content": f"[全球宏观] {final_content}",
+                                "pub_date": pub_date,
+                                "source": "东方财富-全球"
+                            })
+            except Exception as e:
+                logger.warning(f"新浪全球新闻获取失败：{e}")
+
+            # 数据源 1.6: 宏观经济数据新闻 (新增)
+            try:
+                macro_symbols = ["CPI", "PPI", "GDP", "非农", "美联储", "央行"]
+                for symbol in macro_symbols:
+                    try:
+                        df_macro = ak.stock_news_em(symbol=symbol)
+                        if df_macro is not None and not df_macro.empty:
+                            for _, row in df_macro.iterrows():
+                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                                
+                                final_content = content if content and len(content) > 10 else title
+                                if final_content and len(final_content) > 10:
+                                    all_news.append({
+                                        "content": f"[宏观数据] {symbol}: {final_content}",
+                                        "pub_date": pub_date,
+                                        "source": f"宏观数据-{symbol}"
+                                    })
+                    except:
+                        continue
+            except Exception as e:
+                logger.warning(f"宏观经济数据新闻获取失败：{e}")
+
 
 
             # 数据源 2: 期货资讯 (SHMET)
@@ -355,10 +398,106 @@ class DataFetcher:
 
             # 备用数据源已整合至数据源 2
 
+            # 数据源 9: 国际期货市场新闻 (新增)
+            try:
+                intl_symbols = ["COMEX", "LME", "CBOT", "NYMEX", "ICE"]
+                for symbol in intl_symbols:
+                    try:
+                        df_intl = ak.stock_news_em(symbol=symbol)
+                        if df_intl is not None and not df_intl.empty:
+                            for _, row in df_intl.iterrows():
+                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                                
+                                final_content = content if content and len(content) > 10 else title
+                                if final_content and len(final_content) > 10:
+                                    all_news.append({
+                                        "content": f"[国际市场] {symbol}: {final_content}",
+                                        "pub_date": pub_date,
+                                        "source": f"国际期货-{symbol}"
+                                    })
+                    except:
+                        continue
+            except Exception as e:
+                logger.warning(f"国际期货市场新闻获取失败：{e}")
 
-            # 如果没有关键词，返回前 15 条
+            # 数据源 10: 汇率与外汇新闻 (新增)
+            try:
+                forex_symbols = ["美元", "欧元", "日元", "英镑", "人民币", "汇率"]
+                for symbol in forex_symbols:
+                    try:
+                        df_forex = ak.stock_news_em(symbol=symbol)
+                        if df_forex is not None and not df_forex.empty:
+                            for _, row in df_forex.iterrows():
+                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                                
+                                final_content = content if content and len(content) > 10 else title
+                                if final_content and len(final_content) > 10:
+                                    all_news.append({
+                                        "content": f"[外汇市场] {symbol}: {final_content}",
+                                        "pub_date": pub_date,
+                                        "source": f"外汇-{symbol}"
+                                    })
+                    except:
+                        continue
+            except Exception as e:
+                logger.warning(f"汇率与外汇新闻获取失败：{e}")
+
+            # 数据源 11: 债券与利率新闻 (新增)
+            try:
+                bond_symbols = ["国债", "美债", "利率", "收益率", "债券"]
+                for symbol in bond_symbols:
+                    try:
+                        df_bond = ak.stock_news_em(symbol=symbol)
+                        if df_bond is not None and not df_bond.empty:
+                            for _, row in df_bond.iterrows():
+                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                                
+                                final_content = content if content and len(content) > 10 else title
+                                if final_content and len(final_content) > 10:
+                                    all_news.append({
+                                        "content": f"[债券利率] {symbol}: {final_content}",
+                                        "pub_date": pub_date,
+                                        "source": f"债券-{symbol}"
+                                    })
+                    except:
+                        continue
+            except Exception as e:
+                logger.warning(f"债券与利率新闻获取失败：{e}")
+
+            # 数据源 12: 股市大盘新闻 (新增)
+            try:
+                stock_symbols = ["A股", "美股", "港股", "纳斯达克", "标普", "道琼斯", "恒生指数"]
+                for symbol in stock_symbols:
+                    try:
+                        df_stock = ak.stock_news_em(symbol=symbol)
+                        if df_stock is not None and not df_stock.empty:
+                            for _, row in df_stock.iterrows():
+                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                                
+                                final_content = content if content and len(content) > 10 else title
+                                if final_content and len(final_content) > 10:
+                                    all_news.append({
+                                        "content": f"[股市] {symbol}: {final_content}",
+                                        "pub_date": pub_date,
+                                        "source": f"股市-{symbol}"
+                                    })
+                    except:
+                        continue
+            except Exception as e:
+                logger.warning(f"股市大盘新闻获取失败：{e}")
+
+
+            # 如果没有关键词，返回前 50 条
             if not keywords:
-                return all_news[:15]
+                return all_news[:50]
             
             # 根据关键词过滤 (不区分大小写)
             filtered_news = []

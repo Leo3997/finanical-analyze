@@ -127,7 +127,7 @@ const MetricCard = ({ title, value, change, isPositive, isFavorite, category, on
           <span className={`text-[9px] px-1.5 py-0.5 rounded border flex items-center gap-1 ${
             marketStatus.isOpen
               ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-              : "bg-[#262630] text-[#b0aca5] border-[#262630]"
+              : "bg-[#262630] text-[#e8e6e3] border-[#262630]"
           }`}>
             {marketStatus.isOpen ? (
               <>
@@ -160,7 +160,7 @@ const MetricCard = ({ title, value, change, isPositive, isFavorite, category, on
           </div>
           {/* 下一交易时段提示 */}
           {!marketStatus.isOpen && marketStatus.nextAction && (
-            <span className="text-[10px] text-[#b0aca5] flex items-center gap-0.5">
+            <span className="text-[10px] text-[#e8e6e3] flex items-center gap-0.5">
               <Clock className="w-2.5 h-2.5" />
               {marketStatus.nextAction}
             </span>
@@ -271,18 +271,18 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
           <div className="w-1 h-5 sm:h-6 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
           <div>
             <h3 className="text-sm font-semibold text-[#e8e6e3] tracking-wide">市场实时看板</h3>
-            <p className="text-[9px] sm:text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">农产品期货 · AGRICULTURAL FUTURES</p>
+            <p className="text-[9px] sm:text-[10px] font-data text-[#d4d0c8] tracking-wider uppercase mt-0.5">农产品期货 · AGRICULTURAL FUTURES</p>
           </div>
         </div>
         
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* 分类筛选 */}
           <div className="flex items-center gap-1.5">
-            <Filter className="w-3 h-3 text-[#5a5a5a]" />
+            <Filter className="w-3 h-3 text-[#d4d0c8]" />
             <select 
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-[#0d0d0f] border border-[#262630] text-[#b0aca5] text-xs rounded-md px-2 py-1 focus:outline-none focus:border-[var(--gold)]/30"
+              className="bg-[#0d0d0f] border border-[#262630] text-[#e8e6e3] text-xs rounded-md px-2 py-1 focus:outline-none focus:border-[var(--gold)]/30"
             >
               <option value="全部">全部分类</option>
               {categories.map(cat => (
@@ -297,7 +297,7 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-all ${
               showFavoritesOnly 
                 ? "bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20" 
-                : "bg-[#0d0d0f] text-[#5a5a5a] border border-[#262630] hover:text-[#b0aca5]"
+                : "bg-[#0d0d0f] text-[#d4d0c8] border border-[#262630] hover:text-[#e8e6e3]"
             }`}
           >
             <Heart className={`w-3 h-3 ${showFavoritesOnly ? "fill-current" : ""}`} />
@@ -321,7 +321,7 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
           className={`cursor-pointer px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs transition-all ${
             selectedCategory === "全部" 
               ? "bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20" 
-              : "bg-transparent text-[#5a5a5a] border border-[#262630] hover:bg-white/[0.03] hover:text-[#8a8a8a]"
+              : "bg-transparent text-[#d4d0c8] border border-[#262630] hover:bg-white/[0.03] hover:text-[#d4d0c8]"
           }`}
           onClick={() => setSelectedCategory("全部")}
         >
@@ -334,7 +334,7 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
             className={`cursor-pointer px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs transition-all ${
               selectedCategory === cat 
                 ? categoryColors[cat]?.replace("/10", "/20") + " border-current" 
-                : "bg-transparent text-[#5a5a5a] border border-[#262630] hover:bg-white/[0.03] hover:text-[#8a8a8a]"
+                : "bg-transparent text-[#d4d0c8] border border-[#262630] hover:bg-white/[0.03] hover:text-[#d4d0c8]"
             }`}
             onClick={() => setSelectedCategory(cat)}
           >
@@ -371,15 +371,15 @@ export const MarketMetrics = ({ onSelect, favorites, onToggleFavorite }: {
         </div>
       ) : (
         <div className="terminal-panel rounded-xl p-8 text-center">
-          <p className="text-[#5a5a5a] text-sm">暂无数据</p>
+          <p className="text-[#d4d0c8] text-sm">暂无数据</p>
           {showFavoritesOnly && favorites.length === 0 && (
-            <p className="text-[#3a3a3a] text-xs mt-2">点击品种卡片上的星标添加自选</p>
+            <p className="text-[#c8c4bc] text-xs mt-2">点击品种卡片上的星标添加自选</p>
           )}
         </div>
       )}
       
       {/* 统计信息 */}
-      <div className="flex items-center justify-between text-[10px] text-[#5a5a5a]">
+      <div className="flex items-center justify-between text-[10px] text-[#d4d0c8]">
         <span>共 {sortedMetrics.length} 个品种</span>
         {favorites.length > 0 && (
           <span>自选: {favorites.length} 个</span>

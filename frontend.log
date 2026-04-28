@@ -3,189 +3,57 @@
 > vite --host 0.0.0.0
 
 
-  VITE v8.0.10  ready in 357 ms
+  VITE v8.0.10  ready in 301 ms
 
   ➜  Local:   http://localhost:5173/
-  ➜  Network: http://10.148.0.103:5173/
-16:56:41 [vite] vite.config.ts changed, restarting server...
-16:56:41 [vite] server restarted.
-16:56:44 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:45 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:46 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:46 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:49 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:50 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:54 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:55 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:56 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:56 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:56:59 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:00 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:04 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:05 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:06 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:06 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:09 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:10 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:14 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:15 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:16 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:16 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:19 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:20 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:24 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:25 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:26 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:26 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:29 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:30 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:34 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:35 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:36 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:36 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:39 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:40 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:44 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:45 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:46 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:46 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:49 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:50 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:54 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:55 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:56 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:56 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:57:59 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:00 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:04 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:05 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:06 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:06 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:09 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:10 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:14 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:15 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:50 [vite] http proxy error: /api/logs
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:50 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:50 [vite] http proxy error: /api/agricultural_quotes
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
-16:58:51 [vite] http proxy error: /api/state
-Error: connect ECONNREFUSED 127.0.0.1:5000
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+  ➜  Network: http://10.148.0.111:5173/
+  ➜  Network: http://128.128.0.1:5173/
+11:31:33 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+11:32:03 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+11:32:21 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+11:32:40 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+11:33:53 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css
+11:40:02 [vite] (client) hmr update /src/App.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/button.tsx, /src/components/ui/badge.tsx, /src/components/ui/card.tsx, /src/components/ui/scroll-area.tsx, /src/components/ui/tabs.tsx, /src/components/ui/input.tsx, /src/components/ui/label.tsx, /src/components/ui/textarea.tsx, /src/components/ui/dialog.tsx, /src/components/ui/dropdown-menu.tsx
+11:40:02 [vite] (client) page reload src/main.tsx
+11:40:02 [vite] (client) hmr update /src/components/FinancialReportView.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/components/MarketAnalysisView.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/components/FuturesChart.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/IntelligencePanel.tsx
+11:40:02 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/components/AIReportCard.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/AIAnalystChat.tsx
+11:40:02 [vite] (client) hmr update /src/components/DashboardLayout.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/card.tsx
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/input.tsx
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/dropdown-menu.tsx
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/dialog.tsx
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/tabs.tsx
+11:40:02 [vite] (client) hmr update /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/textarea.tsx
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/label.tsx
+11:40:02 [vite] (client) hmr update /src/index.css, /src/components/ui/scroll-area.tsx
+11:40:02 [vite] (client) hmr update /src/components/ui/button.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/components/ui/badge.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/components/LiveLogs.tsx, /src/index.css
+11:40:02 [vite] (client) hmr update /src/components/MarketMetrics.tsx, /src/index.css
+11:40:03 [vite] (client) hmr invalidate /src/components/ui/button.tsx Could not Fast Refresh ("buttonVariants" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:40:03 [vite] (client) hmr update /src/App.tsx, /src/components/NewsView.tsx, /src/components/MarketAnalysisView.tsx, /src/components/FinancialReportView.tsx, /src/components/FuturesChart.tsx
+11:40:03 [vite] (client) hmr invalidate /src/components/ui/badge.tsx Could not Fast Refresh ("badgeVariants" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:40:03 [vite] (client) hmr update /src/App.tsx, /src/components/MarketMetrics.tsx, /src/components/AIReportCard.tsx, /src/components/NewsView.tsx, /src/components/MarketAnalysisView.tsx, /src/components/FinancialReportView.tsx, /src/components/FuturesChart.tsx
+11:40:03 [vite] (client) hmr invalidate /src/components/ui/tabs.tsx Could not Fast Refresh ("tabsListVariants" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:40:03 [vite] (client) hmr update /src/components/NewsView.tsx
+11:40:07 [vite] (client) hmr update /src/index.css
+14:27:17 [vite] vite.config.ts changed, restarting server...
+14:27:17 [vite] (client) hmr update /src/index.css
+14:27:17 [vite] (client) hmr update /src/components/MarketAnalysisView.tsx, /src/index.css
+14:27:17 [vite] (client) hmr update /src/components/NewsView.tsx, /src/index.css
+14:27:18 [vite] server restarted.
+15:46:00 [vite] vite.config.ts changed, restarting server...
+15:46:00 [vite] (client) hmr update /src/components/MarketAnalysisView.tsx, /src/index.css
+15:46:00 [vite] (client) hmr update /src/index.css
+15:46:00 [vite] (client) hmr update /src/index.css, /src/components/NewsView.tsx
+15:46:01 [vite] server restarted.

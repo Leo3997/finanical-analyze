@@ -18,7 +18,7 @@ export const AIReportCard = ({ report }: { report: string }) => {
           </div>
           <div>
             <CardTitle className="text-base font-semibold text-[#e8e6e3]">AI 智能研报</CardTitle>
-            <p className="text-[10px] font-data text-[#5a5a5a] flex items-center gap-1.5 mt-1 tracking-wider uppercase">
+            <p className="text-[10px] font-data text-[#d4d0c8] flex items-center gap-1.5 mt-1 tracking-wider uppercase">
               <Calendar className="w-3 h-3" /> {new Date().toLocaleDateString()} · Deep Analysis
             </p>
           </div>
@@ -43,8 +43,8 @@ export const AIReportCard = ({ report }: { report: string }) => {
                   <FileText className="w-10 h-10 text-[#2a2a35]" />
                 </div>
                 <div className="text-center space-y-1">
-                  <p className="text-sm text-[#5a5a5a]">暂无今日研报</p>
-                  <p className="text-[11px] font-data text-[#3a3a3a] tracking-wider">AWAITING DATA INPUT</p>
+                  <p className="text-sm text-[#d4d0c8]">暂无今日研报</p>
+                  <p className="text-[11px] font-data text-[#c8c4bc] tracking-wider">AWAITING DATA INPUT</p>
                 </div>
               </div>
             )}

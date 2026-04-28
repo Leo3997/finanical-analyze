@@ -329,7 +329,7 @@ export const FinancialReportView = () => {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--gold)]"></div>
-        <p className="text-[#5a5a5a] font-data uppercase tracking-widest text-xs">加载专业研报数据...</p>
+        <p className="text-[#d4d0c8] font-data uppercase tracking-widest text-xs">加载专业研报数据...</p>
       </div>
     );
   }
@@ -347,7 +347,7 @@ export const FinancialReportView = () => {
                 <div className="w-1 h-8 rounded-full bg-gradient-to-b from-[var(--gold)] to-[var(--gold-dim)]" />
                 <div>
                   <h1 className="text-2xl font-serif font-bold tracking-tight">财经研报中心</h1>
-                  <p className="text-[10px] font-data text-[#5a5a5a] tracking-wider uppercase mt-0.5">Professional Financial Analysis Reports</p>
+                  <p className="text-[10px] font-data text-[#d4d0c8] tracking-wider uppercase mt-0.5">Professional Financial Analysis Reports</p>
                 </div>
               </div>
               
@@ -364,7 +364,7 @@ export const FinancialReportView = () => {
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       filters.category.includes(category)
                         ? getCategoryColor(category)
-                        : 'text-[#5a5a5a] hover:text-[#b0aca5] bg-transparent'
+                        : 'text-[#d4d0c8] hover:text-[#e8e6e3] bg-transparent'
                     }`}
                   >
                     {category}
@@ -378,7 +378,7 @@ export const FinancialReportView = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className="border-[#262630] text-[#5a5a5a] hover:text-[var(--gold)] hover:border-[var(--gold)]/30"
+                className="border-[#262630] text-[#d4d0c8] hover:text-[var(--gold)] hover:border-[var(--gold)]/30"
               >
                 <Filter className="w-4 h-4 mr-2" />
                 筛选
@@ -395,7 +395,7 @@ export const FinancialReportView = () => {
                 上传研报
               </Button>
               
-              <Badge variant="outline" className="border-[#262630] text-[#7a7a85] font-data text-[10px] uppercase">
+              <Badge variant="outline" className="border-[#262630] text-[#e0ddd5] font-data text-[10px] uppercase">
                 {filteredReports.length} 篇研报
               </Badge>
             </div>
@@ -406,11 +406,11 @@ export const FinancialReportView = () => {
             <div className="mt-4 p-4 rounded-lg bg-[#0d0d0f] border border-[#262630]">
               <div className="grid grid-cols-4 gap-4">
                 <div>
-                  <label className="text-xs text-[#5a5a5a] uppercase tracking-wider block mb-2">时间范围</label>
+                  <label className="text-xs text-[#d4d0c8] uppercase tracking-wider block mb-2">时间范围</label>
                   <select 
                     value={filters.timeRange}
                     onChange={(e) => setFilters(prev => ({ ...prev, timeRange: e.target.value }))}
-                    className="w-full bg-[#0a0a0a] border border-[#262630] text-[#b0aca5] text-sm rounded-md px-3 py-2"
+                    className="w-full bg-[#0a0a0a] border border-[#262630] text-[#e8e6e3] text-sm rounded-md px-3 py-2"
                   >
                     <option value="all">全部时间</option>
                     <option value="week">最近一周</option>
@@ -419,7 +419,7 @@ export const FinancialReportView = () => {
                 </div>
                 
                 <div>
-                  <label className="text-xs text-[#5a5a5a] uppercase tracking-wider block mb-2">风险等级</label>
+                  <label className="text-xs text-[#d4d0c8] uppercase tracking-wider block mb-2">风险等级</label>
                   <div className="flex gap-2">
                     {['低', '中', '高'].map(risk => (
                       <button
@@ -433,7 +433,7 @@ export const FinancialReportView = () => {
                         className={`px-3 py-1 rounded text-xs ${
                           filters.riskLevel.includes(risk)
                             ? getRiskColor(risk) + ' bg-white/5'
-                            : 'text-[#5a5a5a] hover:text-[#b0aca5]'
+                            : 'text-[#d4d0c8] hover:text-[#e8e6e3]'
                         }`}
                       >
                         {risk}
@@ -468,7 +468,7 @@ export const FinancialReportView = () => {
                       <CardTitle className="text-2xl font-serif leading-tight">
                         {selectedReport.title}
                       </CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-[#5a5a5a]">
+                      <div className="flex items-center gap-4 text-sm text-[#d4d0c8]">
                         <span className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
                           {selectedReport.author}
@@ -490,12 +490,12 @@ export const FinancialReportView = () => {
                     <div className="flex gap-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="outline" size="sm" className="border-[#262630] text-[#5a5a5a] hover:text-[var(--gold)]">
+                          <Button variant="outline" size="sm" className="border-[#262630] text-[#d4d0c8] hover:text-[var(--gold)]">
                             <MoreVertical className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-[#131316] border-[#262630]">
-                          <DropdownMenuItem onClick={() => openEditDialog(selectedReport)} className="text-[#b0aca5] hover:text-[var(--gold)]">
+                          <DropdownMenuItem onClick={() => openEditDialog(selectedReport)} className="text-[#e8e6e3] hover:text-[var(--gold)]">
                             <Edit2 className="w-4 h-4 mr-2" />
                             编辑
                           </DropdownMenuItem>
@@ -522,7 +522,7 @@ export const FinancialReportView = () => {
                         <FileUp className="w-8 h-8 text-[var(--gold)]" />
                         <div>
                           <p className="text-sm font-medium text-[#e8e6e3]">附件文件</p>
-                          <p className="text-xs text-[#5a5a5a] uppercase">{selectedReport.fileType}</p>
+                          <p className="text-xs text-[#d4d0c8] uppercase">{selectedReport.fileType}</p>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -566,7 +566,7 @@ export const FinancialReportView = () => {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {selectedReport.targetSymbols.map(symbol => (
-                      <Badge key={symbol} variant="outline" className="border-[#262630] text-[#b0aca5]">
+                      <Badge key={symbol} variant="outline" className="border-[#262630] text-[#e8e6e3]">
                         {symbol}
                       </Badge>
                     ))}
@@ -596,7 +596,7 @@ export const FinancialReportView = () => {
                           {report.riskLevel}风险
                         </span>
                         {report.fileType && (
-                          <Badge variant="outline" className="border-[#262630] text-[#5a5a5a] text-[10px]">
+                          <Badge variant="outline" className="border-[#262630] text-[#d4d0c8] text-[10px]">
                             <FileUp className="w-3 h-3 mr-1" />
                             {report.fileType.toUpperCase()}
                           </Badge>
@@ -612,7 +612,7 @@ export const FinancialReportView = () => {
                             className="p-1.5 rounded hover:bg-white/5"
                             title="预览文件"
                           >
-                            <Eye className="w-4 h-4 text-[#5a5a5a] hover:text-[var(--gold)]" />
+                            <Eye className="w-4 h-4 text-[#d4d0c8] hover:text-[var(--gold)]" />
                           </button>
                         )}
                         <button 
@@ -622,7 +622,7 @@ export const FinancialReportView = () => {
                           }}
                           className="p-1.5 rounded hover:bg-white/5"
                         >
-                          <Edit2 className="w-4 h-4 text-[#5a5a5a] hover:text-[var(--gold)]" />
+                          <Edit2 className="w-4 h-4 text-[#d4d0c8] hover:text-[var(--gold)]" />
                         </button>
                         <button 
                           onClick={(e) => {
@@ -632,7 +632,7 @@ export const FinancialReportView = () => {
                           }}
                           className="p-1.5 rounded hover:bg-white/5"
                         >
-                          <Trash2 className="w-4 h-4 text-[#5a5a5a] hover:text-red-400" />
+                          <Trash2 className="w-4 h-4 text-[#d4d0c8] hover:text-red-400" />
                         </button>
                       </div>
                     </div>
@@ -641,11 +641,11 @@ export const FinancialReportView = () => {
                       {report.title}
                     </h3>
                     
-                    <p className="text-sm text-[#8a8a8a] mb-4 line-clamp-2">
+                    <p className="text-sm text-[#d4d0c8] mb-4 line-clamp-2">
                       {report.summary}
                     </p>
                     
-                    <div className="flex items-center justify-between text-xs text-[#5a5a5a]">
+                    <div className="flex items-center justify-between text-xs text-[#d4d0c8]">
                       <div className="flex items-center gap-4">
                         <span>{report.author}</span>
                         <span>{report.publishDate}</span>
@@ -684,7 +684,7 @@ export const FinancialReportView = () => {
                           <Badge className={`text-xs ${getCategoryColor(report.category)}`}>
                             {report.category}
                           </Badge>
-                          <span className="text-xs text-[#5a5a5a]">{report.views}阅读</span>
+                          <span className="text-xs text-[#d4d0c8]">{report.views}阅读</span>
                         </div>
                         <p className="text-sm font-medium line-clamp-2">{report.title}</p>
                       </div>
@@ -706,7 +706,7 @@ export const FinancialReportView = () => {
                       const count = reports.filter(r => r.category === category).length;
                       return (
                         <div key={category} className="flex justify-between items-center">
-                          <span className="text-[#b0aca5]">{category}</span>
+                          <span className="text-[#e8e6e3]">{category}</span>
                           <span className="text-[var(--gold)]">{count}</span>
                         </div>
                       );
@@ -724,14 +724,14 @@ export const FinancialReportView = () => {
         <DialogContent className="bg-[#131316] border-[#262630] max-w-2xl max-h-[90vh] overflow-y-auto dialog-scroll">
           <DialogHeader>
             <DialogTitle className="text-lg font-serif text-[#e8e6e3]">上传研报</DialogTitle>
-            <DialogDescription className="text-[#5a5a5a]">
+            <DialogDescription className="text-[#d4d0c8]">
               支持 PDF 和 Word 文档，最大 10MB
             </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-4 py-4 pr-2 custom-scrollbar">
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">研报标题 *</Label>
+              <Label className="text-[#e8e6e3]">研报标题 *</Label>
               <Input
                 value={uploadData.title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadData(prev => ({ ...prev, title: e.target.value }))}
@@ -742,7 +742,7 @@ export const FinancialReportView = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label className="text-[#b0aca5]">分类</Label>
+                <Label className="text-[#e8e6e3]">分类</Label>
                 <select
                   value={uploadData.category}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setUploadData(prev => ({ ...prev, category: e.target.value }))}
@@ -756,7 +756,7 @@ export const FinancialReportView = () => {
               </div>
               
               <div className="grid gap-2">
-                <Label className="text-[#b0aca5]">风险等级</Label>
+                <Label className="text-[#e8e6e3]">风险等级</Label>
                 <select
                   value={uploadData.riskLevel}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setUploadData(prev => ({ ...prev, riskLevel: e.target.value }))}
@@ -770,7 +770,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">摘要</Label>
+              <Label className="text-[#e8e6e3]">摘要</Label>
               <Textarea
                 value={uploadData.summary}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setUploadData(prev => ({ ...prev, summary: e.target.value }))}
@@ -780,7 +780,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">作者</Label>
+              <Label className="text-[#e8e6e3]">作者</Label>
               <Input
                 value={uploadData.author}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadData(prev => ({ ...prev, author: e.target.value }))}
@@ -790,7 +790,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">相关品种</Label>
+              <Label className="text-[#e8e6e3]">相关品种</Label>
               <Input
                 value={uploadData.targetSymbols}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadData(prev => ({ ...prev, targetSymbols: e.target.value }))}
@@ -800,7 +800,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">上传文件</Label>
+              <Label className="text-[#e8e6e3]">上传文件</Label>
               <div className="border-2 border-dashed border-[#262630] rounded-lg p-8 text-center hover:border-[var(--gold)]/50 transition-all cursor-pointer bg-[#0a0a0a]/50">
                 <input
                   ref={fileInputRef}
@@ -819,13 +819,13 @@ export const FinancialReportView = () => {
                       '点击选择文件或拖拽到此处'
                     )}
                   </p>
-                  <p className="text-xs text-[#5a5a5a]">支持 PDF、DOC、DOCX 格式，最大 10MB</p>
+                  <p className="text-xs text-[#d4d0c8]">支持 PDF、DOC、DOCX 格式，最大 10MB</p>
                 </label>
               </div>
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">研报内容</Label>
+              <Label className="text-[#e8e6e3]">研报内容</Label>
               <Textarea
                 value={uploadData.content}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setUploadData(prev => ({ ...prev, content: e.target.value }))}
@@ -839,7 +839,7 @@ export const FinancialReportView = () => {
             <Button
               variant="outline"
               onClick={() => setShowUploadDialog(false)}
-              className="border-[#262630] text-[#5a5a5a]"
+              className="border-[#262630] text-[#d4d0c8]"
             >
               取消
             </Button>
@@ -869,7 +869,7 @@ export const FinancialReportView = () => {
         <DialogContent className="bg-[#131316] border-[#262630] max-w-2xl max-h-[90vh] overflow-y-auto dialog-scroll">
           <DialogHeader>
             <DialogTitle className="text-lg font-serif text-[#e8e6e3]">编辑研报</DialogTitle>
-            <DialogDescription className="text-[#5a5a5a]">
+            <DialogDescription className="text-[#d4d0c8]">
               修改研报信息
             </DialogDescription>
           </DialogHeader>
@@ -877,7 +877,7 @@ export const FinancialReportView = () => {
           <div className="grid gap-4 py-4 pr-2 custom-scrollbar">
             {/* 与上传表单相同的字段 */}
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">研报标题 *</Label>
+              <Label className="text-[#e8e6e3]">研报标题 *</Label>
               <Input
                 value={uploadData.title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadData(prev => ({ ...prev, title: e.target.value }))}
@@ -887,7 +887,7 @@ export const FinancialReportView = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label className="text-[#b0aca5]">分类</Label>
+                <Label className="text-[#e8e6e3]">分类</Label>
                 <select
                   value={uploadData.category}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setUploadData(prev => ({ ...prev, category: e.target.value }))}
@@ -901,7 +901,7 @@ export const FinancialReportView = () => {
               </div>
               
               <div className="grid gap-2">
-                <Label className="text-[#b0aca5]">风险等级</Label>
+                <Label className="text-[#e8e6e3]">风险等级</Label>
                 <select
                   value={uploadData.riskLevel}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setUploadData(prev => ({ ...prev, riskLevel: e.target.value }))}
@@ -915,7 +915,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">摘要</Label>
+              <Label className="text-[#e8e6e3]">摘要</Label>
               <Textarea
                 value={uploadData.summary}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setUploadData(prev => ({ ...prev, summary: e.target.value }))}
@@ -924,7 +924,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">作者</Label>
+              <Label className="text-[#e8e6e3]">作者</Label>
               <Input
                 value={uploadData.author}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadData(prev => ({ ...prev, author: e.target.value }))}
@@ -933,7 +933,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">相关品种</Label>
+              <Label className="text-[#e8e6e3]">相关品种</Label>
               <Input
                 value={uploadData.targetSymbols}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadData(prev => ({ ...prev, targetSymbols: e.target.value }))}
@@ -942,7 +942,7 @@ export const FinancialReportView = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label className="text-[#b0aca5]">研报内容</Label>
+              <Label className="text-[#e8e6e3]">研报内容</Label>
               <Textarea
                 value={uploadData.content}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setUploadData(prev => ({ ...prev, content: e.target.value }))}
@@ -955,7 +955,7 @@ export const FinancialReportView = () => {
             <Button
               variant="outline"
               onClick={() => setShowEditDialog(false)}
-              className="border-[#262630] text-[#5a5a5a]"
+              className="border-[#262630] text-[#d4d0c8]"
             >
               取消
             </Button>
@@ -975,7 +975,7 @@ export const FinancialReportView = () => {
         <DialogContent className="bg-[#131316] border-[#262630] max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-serif text-[#e8e6e3]">确认删除</DialogTitle>
-            <DialogDescription className="text-[#5a5a5a]">
+            <DialogDescription className="text-[#d4d0c8]">
               此操作不可恢复
             </DialogDescription>
           </DialogHeader>
@@ -996,7 +996,7 @@ export const FinancialReportView = () => {
             <Button
               variant="outline"
               onClick={() => setShowDeleteDialog(false)}
-              className="border-[#262630] text-[#5a5a5a]"
+              className="border-[#262630] text-[#d4d0c8]"
             >
               取消
             </Button>
@@ -1020,7 +1020,7 @@ export const FinancialReportView = () => {
               <Eye className="w-5 h-5" />
               文件预览
             </DialogTitle>
-            <DialogDescription className="text-[#5a5a5a]">
+            <DialogDescription className="text-[#d4d0c8]">
               {previewInfo.type === 'pdf' ? (
                 <>
                   共 {previewInfo.total} 页，显示前 {previewInfo.preview} 页
@@ -1037,7 +1037,7 @@ export const FinancialReportView = () => {
             {loadingPreview ? (
               <div className="h-64 flex flex-col items-center justify-center gap-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--gold)]"></div>
-                <p className="text-[#5a5a5a] text-sm">加载预览中...</p>
+                <p className="text-[#d4d0c8] text-sm">加载预览中...</p>
               </div>
             ) : previewContent ? (
               <div 
@@ -1045,7 +1045,7 @@ export const FinancialReportView = () => {
                 dangerouslySetInnerHTML={{ __html: previewContent }}
               />
             ) : (
-              <div className="h-64 flex flex-col items-center justify-center gap-4 text-[#5a5a5a]">
+              <div className="h-64 flex flex-col items-center justify-center gap-4 text-[#d4d0c8]">
                 <FileUp className="w-16 h-16 opacity-20" />
                 <p>无预览内容</p>
               </div>

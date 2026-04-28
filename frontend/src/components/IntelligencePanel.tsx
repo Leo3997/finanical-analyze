@@ -44,7 +44,7 @@ const SectorHeatmap = ({ news }: { news: NewsItem[] }) => {
           <Activity className="w-3.5 h-3.5 text-[var(--gold)]" />
           <span className="text-xs font-semibold text-[#e8e6e3]">板块热力</span>
         </div>
-        <span className="text-[9px] font-data text-[#3a3a3a] tracking-widest uppercase">Sector Heat</span>
+        <span className="text-[9px] font-data text-[#c8c4bc] tracking-widest uppercase">Sector Heat</span>
       </div>
       <div className="space-y-2">
         {sectorData.map((sector, i) => (
@@ -64,7 +64,7 @@ const SectorHeatmap = ({ news }: { news: NewsItem[] }) => {
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-bold font-data" style={{ color: sector.color }}>{sector.count}</span>
-                <span className="text-[9px] font-data text-[#5a5a5a]">条</span>
+                <span className="text-[9px] font-data text-[#d4d0c8]">条</span>
               </div>
             </div>
             {/* Heat bar */}
@@ -79,7 +79,7 @@ const SectorHeatmap = ({ news }: { news: NewsItem[] }) => {
               />
             </div>
             <div className="flex justify-between mt-1">
-              <span className="text-[8px] font-data tracking-widest text-[#3a3a3a] uppercase">{sector.labelEn}</span>
+              <span className="text-[8px] font-data tracking-widest text-[#c8c4bc] uppercase">{sector.labelEn}</span>
               <span className="text-[9px] font-data" style={{ color: sector.color }}>{sector.pct}%</span>
             </div>
           </div>
@@ -123,7 +123,7 @@ const HotKeywords = ({ news, onKeywordClick, activeFilter }: {
           <Hash className="w-3.5 h-3.5 text-[var(--gold)]" />
           <span className="text-xs font-semibold text-[#e8e6e3]">热点标签</span>
         </div>
-        <span className="text-[9px] font-data text-[#3a3a3a] tracking-widest uppercase">Hot Tags</span>
+        <span className="text-[9px] font-data text-[#c8c4bc] tracking-widest uppercase">Hot Tags</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
         {keywords.map(([kw, count], i) => {
@@ -187,7 +187,7 @@ const QuickTicker = () => {
           <TrendingUp className="w-3.5 h-3.5 text-[var(--gold)]" />
           <span className="text-xs font-semibold text-[#e8e6e3]">行情速览</span>
         </div>
-        <span className="text-[9px] font-data text-[#3a3a3a] tracking-widest uppercase">Quick Ticker</span>
+        <span className="text-[9px] font-data text-[#c8c4bc] tracking-widest uppercase">Quick Ticker</span>
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         {quotes.map((q, i) => {
@@ -202,7 +202,7 @@ const QuickTicker = () => {
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[10px] text-[#7a7a85] truncate">{q.symbol}</span>
+                <span className="text-[10px] text-[#e0ddd5] truncate">{q.symbol}</span>
                 <Icon className="w-2.5 h-2.5" style={{ color }} />
               </div>
               <div className="flex items-baseline gap-1">
@@ -246,7 +246,7 @@ const EventTimeline = ({ news }: { news: NewsItem[] }) => {
           <Clock className="w-3.5 h-3.5 text-[var(--gold)]" />
           <span className="text-xs font-semibold text-[#e8e6e3]">事件脉络</span>
         </div>
-        <span className="text-[9px] font-data text-[#3a3a3a] tracking-widest uppercase">Timeline</span>
+        <span className="text-[9px] font-data text-[#c8c4bc] tracking-widest uppercase">Timeline</span>
       </div>
       <div className="relative">
         {/* Timeline line */}
@@ -272,10 +272,10 @@ const EventTimeline = ({ news }: { news: NewsItem[] }) => {
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <span className="text-[10px] font-data text-[var(--gold-dim)] tracking-wider">{event.time}</span>
                   {event.source && (
-                    <span className="text-[8px] font-data text-[#3a3a3a] tracking-wider uppercase">{event.source}</span>
+                    <span className="text-[8px] font-data text-[#c8c4bc] tracking-wider uppercase">{event.source}</span>
                   )}
                 </div>
-                <p className="text-[11px] leading-relaxed text-[#8a8a8a] group-hover:text-[#b0aca5] transition-colors duration-200">
+                <p className="text-[11px] leading-relaxed text-[#d4d0c8] group-hover:text-[#e8e6e3] transition-colors duration-200">
                   {event.summary}
                 </p>
               </div>
@@ -299,7 +299,7 @@ export const IntelligencePanel = ({ news, onKeywordClick, activeFilter }: Intell
           </div>
           <div>
             <h3 className="text-xs font-semibold text-[#e8e6e3]">情报态势</h3>
-            <p className="text-[8px] font-data text-[#3a3a3a] tracking-widest uppercase mt-0.5">Intelligence Brief</p>
+            <p className="text-[8px] font-data text-[#c8c4bc] tracking-widest uppercase mt-0.5">Intelligence Brief</p>
           </div>
         </div>
       </div>
