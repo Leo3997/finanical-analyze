@@ -10,3 +10,9 @@ app.log
 *.swp
 *.bak
 workflow_state.json
+业务内勤职责.html
+.gitignore
+业务内勤职责.md
+每日报告/430.md
+每日报告/430_report.html
+每日报告/430.pdf

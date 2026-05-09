@@ -36,11 +36,13 @@ def main():
     # --- 阶段一：准备数据并生成图表 ---
     if args.step in ["all", "prepare"]:
         logger.info("开始执行数据准备阶段...")
-        target_symbols = [s.strip() for s in os.getenv("TARGET_SYMBOLS", "").split(",") if s.strip()]
-        if not target_symbols:
-            target_symbols = ["豆粕", "玉米", "大豆", "乙醇", "生物柴"]
+        # 农产品期货品种：玉米、鸡蛋为主，其余为辅
+        target_symbols = ["玉米", "鸡蛋", "豆粕", "豆油", "淀粉", "生猪", "白糖", "棉花", "棕榈油", "菜粕", "菜籽油", "苹果", "红枣", "花生", "大豆"]
             
         quotes_data = fetcher.get_futures_quotes(target_symbols)
+        
+        # 获取农产品现货价格
+        spot_prices = fetcher.get_spot_prices(target_symbols)
         
         # 获取通用期货新闻
         news_df = fetcher.get_futures_news()
@@ -52,8 +54,8 @@ def main():
                 news_list.append(f"{time_str}：{content}")
         news_str = "\n".join(news_list)
 
-        # 获取大宗商品专项新闻
-        commodity_keywords = ["玉米", "淀粉", "乙醇", "大豆", "豆粕", "豆油", "生物柴", "CBOT", "USDA"]
+        # 获取农产品期货专项新闻
+        commodity_keywords = ["玉米", "鸡蛋", "豆粕", "豆油", "淀粉", "生猪", "白糖", "棉花", "棕榈油", "菜粕", "CBOT", "USDA", "农产品"]
         commodity_news_list = fetcher.get_commodity_news(commodity_keywords)
         commodity_news_str = "\n".join([f"({item.get('pub_date','')}) {'[国际]' if item.get('is_intl') else ''} {item.get('content','')}" for item in commodity_news_list])
 
@@ -63,6 +65,7 @@ def main():
         # 保存状态供下一阶段使用
         state = {
             "quotes_data": quotes_data,
+            "spot_prices": spot_prices,
             "news_str": news_str,
             "commodity_news_str": commodity_news_str,
             "commodity_keywords": commodity_keywords,
@@ -94,7 +97,8 @@ def main():
         commodity_report = analyzer.generate_commodity_report(
             state["quotes_data"], 
             state["commodity_news_str"],
-            state["commodity_keywords"]
+            state["commodity_keywords"],
+            state.get("spot_prices", [])
         )
         comm_title = f"【大宗商品市场日报】({state['date_str']})"
         notifier.send_markdown(comm_title, f"## {comm_title}\n\n{commodity_report}")
