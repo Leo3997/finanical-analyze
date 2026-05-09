@@ -4,10 +4,15 @@ import requests
 import re
 from datetime import datetime
 import logging
+import warnings
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# 过滤 AKShare 的非交易日警告
+warnings.filterwarnings('ignore', message='.*非交易日.*')
 
 class DataFetcher:
     """数据采集类，负责从新浪 API 获取期货行情和从 AkShare 获取新闻"""
@@ -146,175 +151,314 @@ class DataFetcher:
             logger.error(f"获取新闻失败：{e}")
             return None
 
-    def get_commodity_news(self, keywords=None):
-        """获取大宗商品新闻并根据关键词过滤"""
+    def _fetch_news_cls(self):
+        """财联社 7x24 小时电报"""
+        items = []
         try:
-            logger.info(f"正在获取大宗商品新闻，过滤关键词：{keywords}")
-            all_news = []
-
-            # 数据源 1: 财联社 7x24 小时电报 (宏观局势/地缘/气候)
-            try:
-                df_news_cls = ak.stock_info_global_cls()
-                if df_news_cls is not None and not df_news_cls.empty:
-                    for _, row in df_news_cls.iterrows():
-                        # 兼容乱码的列名：通常索引 1 是内容，索引 2 是日期，索引 3 是时间
-                        title = str(self._get_row_data(row, ['标题', 'title'], 0))
-                        content = str(self._get_row_data(row, ['内容', 'content'], 1))
-                        date_str = str(self._get_row_data(row, ['发布日期', 'date'], 2))
-                        time_str = str(self._get_row_data(row, ['发布时间', 'time'], 3))
-                        
-                        full_time = f"{date_str} {time_str}".strip()
-                        final_content = content if content and len(content) > 10 else title
-                        
-                        if final_content and len(final_content) > 10:
-                            all_news.append({
-                                "content": final_content, 
-                                "pub_date": full_time,
-                                "source": "财联社 7x24"
-                            })
-            except Exception as e:
-                logger.warning(f"财联社全球电报获取失败：{e}")
-
-            # 数据源 1.5: 新浪财经全球新闻 (新增)
-            try:
-                df_sina_global = ak.stock_news_em(symbol="全球")
-                if df_sina_global is not None and not df_sina_global.empty:
-                    for _, row in df_sina_global.iterrows():
-                        title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
-                        content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
-                        pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
-                        
-                        final_content = content if content and len(content) > 10 else title
-                        if final_content and len(final_content) > 10:
-                            all_news.append({
-                                "content": f"[全球宏观] {final_content}",
-                                "pub_date": pub_date,
-                                "source": "东方财富-全球"
-                            })
-            except Exception as e:
-                logger.warning(f"新浪全球新闻获取失败：{e}")
-
-            # 数据源 1.6: 宏观经济数据新闻 (仅保留与农产品相关的宏观数据)
-            try:
-                macro_symbols = ["CPI", "PPI", "美联储", "央行", "通胀"]
-                for symbol in macro_symbols:
-                    try:
-                        df_macro = ak.stock_news_em(symbol=symbol)
-                        if df_macro is not None and not df_macro.empty:
-                            for _, row in df_macro.iterrows():
-                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
-                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
-                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
-                                
-                                final_content = content if content and len(content) > 10 else title
-                                if final_content and len(final_content) > 10:
-                                    all_news.append({
-                                        "content": f"[宏观数据] {symbol}: {final_content}",
-                                        "pub_date": pub_date,
-                                        "source": f"宏观数据-{symbol}"
-                                    })
-                    except:
-                        continue
-            except Exception as e:
-                logger.warning(f"宏观经济数据新闻获取失败：{e}")
-
-
-
-            # 数据源 2: 期货资讯 (SHMET)
-            try:
-                df_shmet = ak.futures_news_shmet()
-                if df_shmet is not None and not df_shmet.empty:
-                    for _, row in df_shmet.iterrows():
-                        # SHMET 索引 0 通常是时间，索引 1 通常是内容
-                        content = str(self._get_row_data(row, ['内容', 'title', '标题'], 1))
-                        pub_date = str(self._get_row_data(row, ['发布时间', '时间', 'pubDate'], 0))
-                        
-                        if content and len(content) > 10:
-                            all_news.append({
-                                "content": content,
-                                "pub_date": pub_date,
-                                "source": "SHMET"
-                            })
-            except Exception as e:
-                logger.warning(f"SHMET 期货新闻获取失败：{e}")
-
-
-
-            # 数据源 3: 核心品种新闻 (玉米、鸡蛋为主)
-            try:
-                core_symbols = ["玉米", "鸡蛋", "豆粕", "豆油", "淀粉", "生猪", "白糖", "棉花", "棕榈油", "菜粕"]
-                for symbol in core_symbols:
-                    try:
-                        df_agri = ak.stock_news_em(symbol=symbol)
-                        if df_agri is not None and not df_agri.empty:
-                            for _, row in df_agri.iterrows():
-                                title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
-                                content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
-                                pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
-                                
-                                final_content = content if content and len(content) > 10 else title
-                                if final_content and len(final_content) > 10:
-                                    all_news.append({
-                                        "content": f"{symbol}: {final_content}",
-                                        "pub_date": pub_date,
-                                        "source": f"农产品期货-{symbol}"
-                                    })
-                    except Exception as e:
-                        logger.warning(f"{symbol} 新闻获取失败：{e}")
-                        continue
-            except Exception as e:
-                logger.warning(f"农产品期货新闻获取失败：{e}")
-
-
-            # 如果没有关键词，返回前 50 条
-            if not keywords:
-                return all_news[:50]
-            
-            # 根据关键词过滤 (不区分大小写)
-            filtered_news = []
-            
-            # 全球宏观与地缘关键词 (仅保留与农产品相关的)
-            macro_keywords = ["伊朗", "战争", "地缘", "原油", "油价", "制裁", "中东", "冲突", "武装", "导弹", "红海", "俄罗斯", "乌克兰", "美联储", "降息", "加息", "通胀", "cpi", "央行", "宏观", 
-                             "贸易战", "关税", "外交", "停火", "军事", "石油", "OPEC", "欧佩克", "能源危机", "经济数据", "非农", "GDP"]
-            # 农产品关键词 (扩展版，核心品种优先)
-            agri_keywords = ["玉米", "鸡蛋", "豆粕", "豆油", "淀粉", "生猪", "白糖", "棉花", "棕榈油", "菜粕", "大豆", "菜籽油", "花生", "苹果", "红枣", "小麦", "大米", "usda", "cbot", "巴西", "阿根廷", "马来西亚", "减产", "干旱", "洪涝", "天气", "气候",
-                            "农产品", "农业", " farming", "harvest", "crop", "soybean", "corn", "wheat", "猪肉", "牛肉", "禽肉", "饲料", "fertilizer", "种植", "播种", "收割"]
-
-            filtered_news = []
-            
-            for item in all_news:
-                content = item['content'].lower()
-                categories = []
-                
-                # 分类检索
-                is_macro = any(kw in content for kw in macro_keywords)
-                is_agri = any(kw in content for kw in agri_keywords)
-                
-                if is_macro: categories.append("geopolitics")
-                if is_agri: categories.append("agriculture")
-                
-                # 优先保留农产品新闻，其次保留宏观新闻
-                if categories:
-                    item['categories'] = categories
-                    # 识别是否包含国际市场关键词
-                    intl_keywords = ["cbot", "usda", "巴西", "阿根廷", "马来西亚", "美盘", "出口", "国际", "海外", "欧美", "全球"]
-                    item['is_intl'] = any(ik in content for ik in intl_keywords)
-                    
-                    # 兼容旧逻辑的宏观预警标签
-                    if is_macro:
-                        item['content'] = "[全球宏观预警] " + item['content']
-                        
-                    filtered_news.append(item)
-            
-            # 如果过滤后为空，尝试更宽泛的匹配或返回兜底
-            if not filtered_news and all_news:
-                logger.info("关键词过滤结果为空，使用前 15 条通用新闻作为兜底。")
-                return all_news[:15]
-            
-            return filtered_news[:100]
+            df = ak.stock_info_global_cls()
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    title = str(self._get_row_data(row, ['标题', 'title'], 0))
+                    content = str(self._get_row_data(row, ['内容', 'content'], 1))
+                    date_str = str(self._get_row_data(row, ['发布日期', 'date'], 2))
+                    time_str = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                    final_content = content if content and len(content) > 10 else title
+                    if final_content and len(final_content) > 10:
+                        items.append({
+                            "content": final_content,
+                            "pub_date": f"{date_str} {time_str}".strip(),
+                            "source": "财联社 7x24"
+                        })
         except Exception as e:
-            logger.error(f"获取大宗商品新闻失败：{e}")
-            return []
+            logger.warning(f"财联社获取失败: {e}")
+        return items
+
+    def _fetch_news_sina_global(self):
+        """新浪全球宏观新闻"""
+        items = []
+        try:
+            df = ak.stock_news_em(symbol="全球")
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                    content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                    pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                    final_content = content if content and len(content) > 10 else title
+                    if final_content and len(final_content) > 10:
+                        items.append({
+                            "content": f"[全球宏观] {final_content}",
+                            "pub_date": pub_date,
+                            "source": "东方财富-全球"
+                        })
+        except Exception as e:
+            logger.warning(f"新浪全球新闻获取失败: {e}")
+        return items
+
+    def _fetch_news_macro_symbol(self, symbol):
+        """获取单个宏观符号的新闻"""
+        items = []
+        try:
+            df = ak.stock_news_em(symbol=symbol)
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                    content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                    pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                    final_content = content if content and len(content) > 10 else title
+                    if final_content and len(final_content) > 10:
+                        items.append({
+                            "content": f"[宏观数据] {symbol}: {final_content}",
+                            "pub_date": pub_date,
+                            "source": f"宏观数据-{symbol}"
+                        })
+        except Exception:
+            pass
+        return items
+
+    def _fetch_news_shmet(self):
+        """SHMET 期货资讯"""
+        items = []
+        try:
+            df = ak.futures_news_shmet()
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    content = str(self._get_row_data(row, ['内容', 'title', '标题'], 1))
+                    pub_date = str(self._get_row_data(row, ['发布时间', '时间', 'pubDate'], 0))
+                    if content and len(content) > 10:
+                        items.append({
+                            "content": content,
+                            "pub_date": pub_date,
+                            "source": "SHMET"
+                        })
+        except Exception as e:
+            logger.warning(f"SHMET 新闻获取失败: {e}")
+        return items
+
+    def _fetch_news_symbol(self, symbol):
+        """获取单个农产品品种的新闻"""
+        items = []
+        try:
+            df = ak.stock_news_em(symbol=symbol)
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                    content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                    pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                    final_content = content if content and len(content) > 10 else title
+                    if final_content and len(final_content) > 10:
+                        items.append({
+                            "content": f"{symbol}: {final_content}",
+                            "pub_date": pub_date,
+                            "source": f"农产品期货-{symbol}"
+                        })
+        except Exception:
+            pass
+        return items
+
+    def _fetch_foreign_futures(self):
+        """获取外盘期货行情"""
+        items = []
+        try:
+            df = ak.qhkc_tool_foreign()
+            if df is not None and not df.empty:
+                agri_related = ['玉米', '大豆', '小麦', '豆粕', '豆油', '棉花', '糖', '油']
+                for _, row in df.iterrows():
+                    name = str(row.get('name', ''))
+                    if any(kw in name for kw in agri_related):
+                        price = row.get('latest_price', row.get('price', 0))
+                        change = row.get('rate', 0)
+                        try:
+                            price = float(price)
+                            change = float(change)
+                            items.append({
+                                "content": f"[外盘行情] {name} 最新价 {price:.2f} 涨跌 {change:+.2f}%",
+                                "pub_date": str(row.get('base_time', datetime.now().strftime('%Y-%m-%d %H:%M'))),
+                                "source": "外盘期货",
+                                "is_intl": True
+                            })
+                        except Exception:
+                            continue
+        except Exception as e:
+            logger.warning(f"外盘期货行情获取失败: {e}")
+
+        try:
+            for keyword in ["CBOT", "USDA"]:
+                try:
+                    df = ak.stock_news_em(symbol=keyword)
+                    if df is not None and not df.empty:
+                        for _, row in df.head(5).iterrows():
+                            title = str(self._get_row_data(row, ['新闻标题', 'title'], 1))
+                            content = str(self._get_row_data(row, ['新闻内容', 'content'], 2))
+                            pub_date = str(self._get_row_data(row, ['发布时间', 'time'], 3))
+                            final_content = content if content and len(content) > 10 else title
+                            if final_content and len(final_content) > 10:
+                                items.append({
+                                    "content": f"[{keyword}国际] {final_content}",
+                                    "pub_date": pub_date,
+                                    "source": f"外盘-{keyword}",
+                                    "is_intl": True
+                                })
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        return items
+
+    def _fetch_macro_china(self):
+        """获取中国宏观经济数据（PMI、CPI）及人民币汇率、黄金"""
+        items = []
+        try:
+            df = ak.macro_china_pmi()
+            if df is not None and not df.empty:
+                latest = df.iloc[-1]
+                month = str(latest.get('月份', ''))
+                mfg = latest.get('制造业-指数', '')
+                non_mfg = latest.get('非制造业-指数', '')
+                if mfg:
+                    items.append({
+                        "content": f"[宏观数据] PMI({month}) 制造业: {mfg} 非制造业: {non_mfg}",
+                        "pub_date": datetime.now().strftime('%Y-%m-%d'),
+                        "source": "宏观数据-中国"
+                    })
+        except Exception:
+            pass
+
+        try:
+            df = ak.macro_china_cpi_yearly()
+            if df is not None and not df.empty:
+                latest = df.dropna(subset=['今值']).iloc[-1] if not df.dropna(subset=['今值']).empty else df.iloc[-1]
+                indicator = str(latest.get('商品', ''))
+                value = latest.get('今值', '')
+                if indicator and value and str(value) != 'nan':
+                    items.append({
+                        "content": f"[宏观数据] {indicator}: {value}",
+                        "pub_date": str(latest.get('日期', datetime.now().strftime('%Y-%m-%d'))),
+                        "source": "宏观数据-中国"
+                    })
+        except Exception:
+            pass
+
+        try:
+            df = ak.futures_foreign_commodity_realtime(symbol="黄金")
+            if df is not None and not df.empty and len(df) > 0:
+                row = df.iloc[-1] if len(df) > 1 else df.iloc[0]
+                price = row.get('最新价', row.iloc[2] if len(row) > 2 else 0)
+                items.append({
+                    "content": f"[宏观数据] 国际黄金 最新价: {price}",
+                    "pub_date": datetime.now().strftime('%Y-%m-%d'),
+                    "source": "宏观数据-国际"
+                })
+        except Exception:
+            try:
+                df = ak.qhkc_tool_foreign()
+                if df is not None and not df.empty:
+                    gold_rows = df[df['name'].astype(str).str.contains('金')]
+                    for _, row in gold_rows.head(2).iterrows():
+                        name = str(row.get('name', ''))
+                        price = row.get('latest_price', 0)
+                        change = row.get('rate', 0)
+                        try:
+                            items.append({
+                                "content": f"[宏观数据] {name} 最新价 {float(price):.2f} 涨跌 {float(change):+.2f}%",
+                                "pub_date": datetime.now().strftime('%Y-%m-%d'),
+                                "source": "宏观数据-国际"
+                            })
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+
+        try:
+            df = ak.macro_china_fx_gold()
+            if df is not None and not df.empty:
+                latest = df.iloc[-1]
+                gold_price = latest.get('黄金', latest.get('gold', ''))
+                if gold_price and str(gold_price) != 'nan':
+                    items.append({
+                        "content": f"[宏观数据] 中国黄金储备: 最新 {gold_price}",
+                        "pub_date": datetime.now().strftime('%Y-%m-%d'),
+                        "source": "宏观数据-中国"
+                    })
+        except Exception:
+            pass
+
+        return items
+
+    def _filter_news(self, all_news):
+        """对采集的新闻进行关键词过滤"""
+        macro_keywords = ["伊朗", "战争", "地缘", "原油", "油价", "制裁", "中东", "冲突", "武装", "导弹", "红海",
+                         "俄罗斯", "乌克兰", "美联储", "降息", "加息", "通胀", "cpi", "央行", "宏观",
+                         "贸易战", "关税", "外交", "停火", "军事", "石油", "OPEC", "欧佩克", "能源危机",
+                         "经济数据", "非农", "GDP", "PMI", "汇率", "人民币", "黄金", "避险", "地缘政治",
+                         "岸田", "特朗普", "选举", "贸易摩擦", "制裁", "军事演习", "台海", "南海"]
+        agri_keywords = ["玉米", "鸡蛋", "豆粕", "豆油", "淀粉", "生猪", "白糖", "棉花", "棕榈油", "菜粕",
+                        "大豆", "豆二", "菜籽油", "花生", "苹果", "红枣", "小麦", "大米", "usda", "cbot",
+                        "巴西", "阿根廷", "马来西亚", "减产", "干旱", "洪涝", "天气", "气候",
+                        "农产品", "农业", "猪肉", "牛肉", "禽肉", "饲料", "种植", "播种", "收割",
+                        "soybean", "corn", "wheat"]
+        intl_keywords = ["cbot", "usda", "巴西", "阿根廷", "马来西亚", "美盘", "出口", "国际", "海外", "欧美", "全球"]
+
+        filtered = []
+        for item in all_news:
+            content = item['content'].lower()
+            is_macro = any(kw in content for kw in macro_keywords)
+            is_agri = any(kw in content for kw in agri_keywords)
+            is_intl = item.get('is_intl', False) or any(ik in content for ik in intl_keywords)
+
+            if is_macro or is_agri or is_intl:
+                item['is_intl'] = is_intl
+                if is_macro and not is_agri:
+                    item['content'] = "[全球宏观预警] " + item['content']
+                filtered.append(item)
+
+        if not filtered and all_news:
+            return all_news[:15]
+        return filtered[:100]
+
+    def get_commodity_news(self, keywords=None):
+        """并行获取全部新闻源并过滤"""
+        import time
+        t0 = time.time()
+        logger.info("正在并行获取大宗商品新闻...")
+
+        all_news = []
+        macro_symbols = ["CPI", "PPI", "美联储", "央行", "通胀", "人民币汇率", "黄金", "地缘政治"]
+        core_symbols = ["玉米", "鸡蛋", "豆粕", "豆油", "淀粉", "生猪", "白糖", "棉花", "棕榈油", "菜粕", "豆二"]
+
+        max_workers = min(20, len(core_symbols) + len(macro_symbols) + 10)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {}
+
+            futures[executor.submit(self._fetch_news_cls)] = "cls"
+            futures[executor.submit(self._fetch_news_sina_global)] = "sina_global"
+            futures[executor.submit(self._fetch_news_shmet)] = "shmet"
+            futures[executor.submit(self._fetch_foreign_futures)] = "foreign"
+            futures[executor.submit(self._fetch_macro_china)] = "macro"
+
+            for sym in macro_symbols:
+                futures[executor.submit(self._fetch_news_macro_symbol, sym)] = f"macro_{sym}"
+            for sym in core_symbols:
+                futures[executor.submit(self._fetch_news_symbol, sym)] = f"symbol_{sym}"
+
+            for future in as_completed(futures):
+                name = futures[future]
+                try:
+                    items = future.result()
+                    all_news.extend(items)
+                    count = len(items)
+                    if count > 0:
+                        logger.debug(f"  [{name}] 获取 {count} 条")
+                except Exception as e:
+                    logger.warning(f"  [{name}] 失败: {e}")
+
+        elapsed = time.time() - t0
+        logger.info(f"新闻并行采集完成，共 {len(all_news)} 条，耗时 {elapsed:.1f}s")
+
+        if keywords:
+            return self._filter_news(all_news)
+        return all_news[:50]
 
     def get_futures_history(self, name, days=5):
         """获取品种历史日线数据"""
@@ -408,54 +552,52 @@ class DataFetcher:
             return None
 
     def get_spot_prices(self, target_names=None):
-        """获取农产品现货价格（使用 AKShare 的 futures_spot_price 接口）"""
+        """获取农产品现货价格（使用 AKShare 的 futures_spot_price_daily 接口）"""
         try:
             logger.info("正在获取农产品现货价格...")
             spot_data = []
+            
+            from datetime import datetime, timedelta
             
             # 期货品种缩写与中文名称映射
             symbol_to_name = {
                 "C": "玉米", "A": "大豆", "M": "豆粕", "Y": "豆油", 
                 "P": "棕榈油", "JD": "鸡蛋", "LH": "生猪", "CF": "棉花",
                 "SR": "白糖", "OI": "菜籽油", "RM": "菜粕", "CS": "淀粉",
-                "AP": "苹果", "CJ": "红枣", "PK": "花生", "B": "豆二",
-                "L": "塑料", "V": "PVC", "PP": "聚丙烯", "EG": "乙二醇",
-                "EB": "苯乙烯", "PG": "LPG", "J": "焦炭", "JM": "焦煤",
-                "I": "铁矿石", "WH": "强麦", "PM": "普麦", "FG": "玻璃",
-                "SA": "纯碱", "UR": "尿素", "SP": "纸浆", "RU": "橡胶",
-                "NR": "20号胶", "BU": "沥青", "FU": "燃料油", "LU": "低硫燃料油",
-                "SC": "原油", "CU": "铜", "AL": "铝", "ZN": "锌", "PB": "铅",
-                "NI": "镍", "SN": "锡", "AU": "黄金", "AG": "白银", "RB": "螺纹钢",
-                "HC": "热卷", "SS": "不锈钢"
+                "AP": "苹果", "CJ": "红枣", "PK": "花生", "B": "豆二"
             }
             
-            # 使用 AKShare 的 futures_spot_price 接口获取现货价格和基差
+            # 农产品品种缩写列表
+            agri_symbols = ["C", "A", "M", "Y", "P", "JD", "LH", "CF", "SR", "OI", "RM", "CS", "AP", "CJ", "PK", "B"]
+            
+            # 使用 futures_spot_price_daily 获取最近30天的数据
+            end_date = datetime.now().strftime("%Y%m%d")
+            start_date = (datetime.now() - timedelta(days=30)).strftime("%Y%m%d")
+            
             try:
-                df = ak.futures_spot_price()
+                df = ak.futures_spot_price_daily(start_day=start_date, end_day=end_date)
                 if df is not None and not df.empty:
-                    logger.info(f"futures_spot_price 返回 {len(df)} 条数据")
+                    logger.info(f"futures_spot_price_daily 返回 {len(df)} 条数据")
                     
-                    # 农产品品种缩写列表
-                    agri_symbols = ["C", "A", "M", "Y", "P", "JD", "LH", "CF", "SR", "OI", "RM", "CS", "AP", "CJ", "PK", "B"]
+                    # 获取最新日期的数据
+                    latest_date = df['date'].max()
+                    df_latest = df[df['date'] == latest_date]
+                    logger.info(f"使用最新日期数据: {latest_date}")
                     
-                    for _, row in df.iterrows():
-                        symbol_code = str(row['symbol']) if 'symbol' in df.columns else str(row.iloc[1])
+                    for _, row in df_latest.iterrows():
+                        symbol_code = str(row['symbol'])
                         
-                        # 检查是否是农产品
                         if symbol_code in agri_symbols:
                             chinese_name = symbol_to_name.get(symbol_code, symbol_code)
                             
-                            # 如果指定了 target_names，过滤
                             if target_names and chinese_name not in target_names:
                                 continue
                             
-                            # 获取数据
                             try:
                                 spot_price = float(row['spot_price']) if 'spot_price' in row else 0
                                 dominant_contract_price = float(row['dominant_contract_price']) if 'dominant_contract_price' in row else 0
                                 dom_basis = float(row['dom_basis']) if 'dom_basis' in row else 0
                                 dom_basis_rate = float(row['dom_basis_rate']) if 'dom_basis_rate' in row else 0
-                                date_str = str(row['date']) if 'date' in row else ""
                                 
                                 if spot_price > 0:
                                     spot_data.append({
@@ -465,7 +607,7 @@ class DataFetcher:
                                         "futures_price": round(dominant_contract_price, 2) if dominant_contract_price else None,
                                         "basis": round(dom_basis, 2) if dom_basis else None,
                                         "basis_rate": f"{round(dom_basis_rate * 100, 2)}%" if dom_basis_rate else None,
-                                        "date": date_str,
+                                        "date": str(latest_date),
                                         "source": "AKShare-现货价格"
                                     })
                                     logger.info(f"获取到 {chinese_name}({symbol_code}) 现货: {spot_price}, 期货: {dominant_contract_price}, 基差: {dom_basis}")
@@ -473,42 +615,7 @@ class DataFetcher:
                                 logger.warning(f"解析 {symbol_code} 数据失败: {e}")
                                 continue
             except Exception as e:
-                logger.warning(f"futures_spot_price 接口获取失败: {e}")
-            
-            # 如果 futures_spot_price 失败，尝试使用 99期货 数据源
-            if not spot_data:
-                try:
-                    spot_table = ak.spot_price_table_qh()
-                    if spot_table is not None and not spot_table.empty:
-                        agri_keywords = ["玉米", "大豆", "豆粕", "豆油", "鸡蛋", "生猪", "白糖", "棉花", "棕榈油", "菜粕", "菜籽油", "淀粉", "花生", "苹果", "红枣"]
-                        
-                        for _, row in spot_table.iterrows():
-                            symbol_name = str(row.iloc[0]) if len(row) > 0 else ""
-                            if any(kw in symbol_name for kw in agri_keywords):
-                                if target_names and not any(t in symbol_name for t in target_names):
-                                    continue
-                                
-                                try:
-                                    df_trend = ak.spot_price_qh(symbol=symbol_name)
-                                    if df_trend is not None and not df_trend.empty:
-                                        latest = df_trend.iloc[-1]
-                                        # 99期货返回：日期、期货收盘价、现货价格
-                                        spot_price = float(latest.iloc[2]) if len(latest) > 2 else 0
-                                        futures_price = float(latest.iloc[1]) if len(latest) > 1 else 0
-                                        
-                                        if spot_price > 0:
-                                            spot_data.append({
-                                                "name": symbol_name,
-                                                "price": round(spot_price, 2),
-                                                "futures_price": round(futures_price, 2) if futures_price else None,
-                                                "basis": round(futures_price - spot_price, 2) if futures_price and spot_price else None,
-                                                "date": str(latest.iloc[0]).split()[0] if len(latest) > 0 else "",
-                                                "source": "99期货"
-                                            })
-                                except:
-                                    continue
-                except Exception as e:
-                    logger.warning(f"99期货现货价格获取失败: {e}")
+                logger.warning(f"futures_spot_price_daily 接口获取失败: {e}")
             
             if spot_data:
                 logger.info(f"成功获取 {len(spot_data)} 个品种的现货价格")
@@ -520,6 +627,86 @@ class DataFetcher:
         except Exception as e:
             logger.error(f"获取现货价格失败: {e}")
             return []
+
+    def get_position_rank(self, varieties=None):
+        """获取主力合约的持仓排名（多单、空单、成交量前5名及其增减）"""
+        import datetime as _dt
+        today = _dt.date.today()
+        year = today.year % 100
+        main_contract_suffix = f"{year:02d}09"
+        
+        contract_map = {
+            "玉米": f"C{main_contract_suffix}", "淀粉": f"CS{main_contract_suffix}",
+            "豆粕": f"M{main_contract_suffix}", "豆油": f"Y{main_contract_suffix}",
+            "棕榈油": f"P{main_contract_suffix}", "鸡蛋": f"JD{main_contract_suffix}",
+            "生猪": f"LH{main_contract_suffix}", "豆二": f"B{main_contract_suffix}",
+            "大豆": f"A{main_contract_suffix}", "白糖": f"SR{main_contract_suffix}",
+            "棉花": f"CF{main_contract_suffix}", "菜籽油": f"OI{main_contract_suffix}",
+            "菜粕": f"RM{main_contract_suffix}",
+        }
+        
+        if varieties is None:
+            varieties = ["玉米", "鸡蛋", "豆粕", "豆油", "白糖", "豆二"]
+
+        target_date = None
+        for offset in range(5):
+            try_date = (today - _dt.timedelta(days=offset)).strftime('%Y%m%d')
+            try:
+                df = ak.futures_hold_pos_sina(symbol='多单持仓', contract=f"C{main_contract_suffix}", date=try_date)
+                if df is not None and len(df) > 0:
+                    target_date = try_date
+                    break
+            except Exception:
+                continue
+        
+        if not target_date:
+            logger.warning("未找到可用的持仓排名日期")
+            return []
+
+        logger.info(f"使用持仓排名日期: {target_date}")
+        
+        result = []
+        rank_types = [
+            ('多单持仓', 'long'),
+            ('空单持仓', 'short'),
+        ]
+        
+        for variety in varieties:
+            contract = contract_map.get(variety)
+            if not contract:
+                continue
+            
+            variety_ranks = {'variety': variety, 'contract': contract, 'date': target_date}
+            
+            for symbol_key, rank_key in rank_types:
+                try:
+                    df = ak.futures_hold_pos_sina(symbol=symbol_key, contract=contract, date=target_date)
+                    if df is not None and len(df) > 0:
+                        top20 = df.head(20)
+                        members = []
+                        for _, row in top20.iterrows():
+                            vol = int(float(row.iloc[2]))
+                            change_val = row.iloc[3]
+                            try:
+                                change_str = f"{float(change_val):+.0f}" if pd.notna(change_val) else "0"
+                            except (ValueError, TypeError):
+                                change_str = "0"
+                            members.append({
+                                'rank': int(row.iloc[0]),
+                                'name': str(row.iloc[1]),
+                                'volume': vol,
+                                'change': change_str
+                            })
+                        variety_ranks[rank_key] = members
+                except Exception as e:
+                    logger.warning(f"获取{variety}/{contract} {symbol_key}失败: {e}")
+                    variety_ranks[rank_key] = []
+            
+            if variety_ranks.get('long') or variety_ranks.get('short'):
+                result.append(variety_ranks)
+        
+        logger.info(f"获取到 {len(result)} 个品种的持仓排名")
+        return result
 
     def get_futures_inventory(self, name):
         """获取库存数据"""

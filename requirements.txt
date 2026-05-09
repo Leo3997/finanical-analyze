@@ -11,3 +11,4 @@ matplotlib
 flask
 flask-cors
 flask-apscheduler
+reportlab

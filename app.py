@@ -169,6 +169,15 @@ def get_logs():
 def health():
     return jsonify({"status": "OK", "time": datetime.now().isoformat()})
 
+@app.route('/pdf_reports/<path:filename>')
+def serve_pdf(filename):
+    import os as _os
+    desktop_dir = _os.path.expanduser('~/桌面/日报')
+    desktop_file = _os.path.join(desktop_dir, filename)
+    if _os.path.exists(desktop_file):
+        return send_from_directory(desktop_dir, filename)
+    return send_from_directory('pdf_reports', filename)
+
 @app.route('/api/news')
 def get_all_news():
     """获取综合财经新闻与国际局势"""

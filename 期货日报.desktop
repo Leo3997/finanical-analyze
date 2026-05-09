@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=期货日报生成
+Comment=一键生成每日期货日报并推送到钉钉
+Exec=bash /home/greatwall/桌面/期货看版/期货看板2/期货看板new/run_daily_report.sh
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Office;Finance;
+StartupNotify=true
